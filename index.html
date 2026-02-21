@@ -32,6 +32,8 @@
         #leaderboard-box { position: fixed; top: 120px; right: 10px; width: 150px; z-index: 45; }
         .admin-badge { position: fixed; top: 70px; right: 10px; background: red; color: white; padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: bold; z-index: 999; }
         .blue-tick { color: #1d9bf0; font-size: 0.8em; margin-left: 4px; }
+        
+        .dev-card { background: linear-gradient(135deg, #ea580c, #f97316); color: white; border-radius: 24px; padding: 20px; text-align: center; box-shadow: 0 10px 20px rgba(234, 88, 12, 0.2); margin-bottom: 100px; }
     </style>
 </head>
 <body class="bg-orange-50 dark:bg-gray-900 dark:text-gray-100 pb-40">
@@ -53,14 +55,14 @@
     <div class="bg-stone-900 text-white py-3 px-4 flex justify-between items-center sticky top-0 z-[60]">
         <div class="text-[11px] font-bold text-orange-400" id="countdown">ইফতারের বাকি: --:--:--</div>
         <div class="flex gap-4 items-center">
-            <button onclick="alert('নোটিফিকেশন চালু হয়েছে!')" title="নোটিফিকেশন" class="text-orange-400 text-sm"><i class="fa-solid fa-bell"></i></button>
+            <button onclick="alert('নোটিফিকেশন চালু হয়েছে!')" title="নোটিফিকেশন" class="text-orange-400 text-sm"><i class="fa-solid fa-bell"></i></button>
             <button onclick="toggleDarkMode()" title="ডার্ক মোড" class="text-orange-400"><i id="dark-icon" class="fa-solid fa-moon"></i></button>
         </div>
     </div>
 
     <div class="bg-orange-600 text-white text-[10px] py-1 font-bold overflow-hidden border-b border-orange-700">
         <div class="animate-marquee whitespace-nowrap">
-            🌙 ইফতারের সময় সঠিক তথ্য দিয়ে অন্যকে সাহায্য করুন। বিরিয়ানি পয়েন্ট অ্যাড করে লিডারবোর্ডে নিজের নাম তুলুন!
+            🌙 ইফতারের সময় সঠিক তথ্য দিয়ে অন্যকে সাহায্য করুন। বিরিয়ানি পয়েন্ট অ্যাড করে লিডারবোর্ডে নিজের নাম তুলুন!
         </div>
     </div>
 
@@ -86,9 +88,21 @@
 
     <main id="post-container" class="max-w-md mx-auto px-4 mt-8 space-y-6"></main>
 
+    <div class="max-w-md mx-auto px-4 mt-12 mb-20">
+        <div class="dev-card">
+            <p class="text-[10px] uppercase font-bold opacity-80 mb-1 tracking-widest">Designed & Developed By</p>
+            <h2 class="text-xl font-black mb-4">Abdur Rahman Majid</h2>
+            <div class="flex justify-center gap-6">
+                <a href="https://facebook.com/imaaajid" target="_blank" class="text-white text-2xl hover:scale-110 transition-transform"><i class="fa-brands fa-facebook"></i></a>
+                <a href="https://facebook.com/imaaajid.2" target="_blank" class="text-white text-2xl hover:scale-110 transition-transform"><i class="fa-brands fa-facebook-messenger"></i></a>
+                <a href="https://instagram.com/imaaajid" target="_blank" class="text-white text-2xl hover:scale-110 transition-transform"><i class="fa-brands fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+
     <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-40">
         <button onclick="toggleForm()" class="w-full bg-orange-600 text-white font-black py-4 rounded-3xl shadow-2xl flex items-center justify-center gap-3 border-4 border-white dark:border-gray-800 active:scale-95 transition-all">
-            <i class="fa-solid fa-location-dot animate-bounce"></i> বিরিয়ানি পয়েন্ট অ্যাড করুন
+            <i class="fa-solid fa-location-dot animate-bounce"></i> বিরিয়ানি পয়েন্ট অ্যাড করুন
         </button>
     </div>
 
@@ -100,8 +114,8 @@
             <select id="food-type" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border focus:border-orange-500 font-bold">
                 <option value="কাচ্চি">কাচ্চি</option>
                 <option value="তেহারি">তেহারি</option>
-                <option value="গরু">গরু বিরিয়ানি</option>
-                <option value="চিকেন">চিকেন বিরিয়ানি</option>
+                <option value="গরু">গরু বিরিয়ানি</option>
+                <option value="চিকেন">চিকেন বিরিয়ানি</option>
             </select>
             <textarea id="loc-desc" placeholder="বিস্তারিত লিখুন (দোকানের নাম বা ল্যান্ডমার্ক)..." class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-6 outline-none h-24 dark:text-white border focus:border-orange-500"></textarea>
             <div class="flex gap-4">
@@ -192,7 +206,12 @@
                 const percent = total ? Math.round((post.true_count || 0) / total * 100) : 0;
                 
                 const searchQuery = encodeURIComponent(post.location + ", Cumilla");
-                const gMapsUrl = `https://www.google.com/maps/search/${searchQuery}`;
+                const gMapsUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
+
+                // সময় ও তারিখ ফরম্যাটিং
+                const postDate = new Date(post.timestamp);
+                const formattedTime = postDate.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
+                const formattedDate = postDate.toLocaleDateString('bn-BD', { day: 'numeric', month: 'short' });
 
                 L.marker([post.lat, post.lon], { icon: L.divIcon({className:'biriyani-marker', html:'🍖'}) }).addTo(markersLayer)
                  .bindPopup(`<b>${post.location}</b><br><a href="${gMapsUrl}" target="_blank">ম্যাপ দেখুন</a>`);
@@ -201,7 +220,7 @@
                     <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] p-7 shadow-lg border border-orange-50 dark:border-gray-700">
                         <div class="flex justify-between items-center mb-4">
                             <span class="text-[9px] font-black text-gray-400 uppercase bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded-md">
-                                BY: ${post.userName || 'Unknown'} | ${new Date(post.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                BY: ${post.userName || 'Unknown'} | 🕒 ${formattedTime}, ${formattedDate}
                             </span>
                             <div class="flex gap-3">
                                 ${isAdmin ? `<button onclick="deletePost('${post.id}')" class="text-red-500 text-xs"><i class="fa fa-trash"></i></button>` : ''}
@@ -239,7 +258,7 @@
 
         async function handleVote(id, type) {
             let voted = JSON.parse(localStorage.getItem("voted_ids") || "{}");
-            if(voted[id]) return alert("ইতিমধ্যে ভোট দিয়েছেন!");
+            if(voted[id]) return alert("ইতিমধ্যে ভোট দিয়েছেন!");
             const res = await fetch(DB_URL.replace('.json', `/${id}.json`));
             const data = await res.json();
             const update = {}; update[type] = (data[type] || 0) + 1;
@@ -258,7 +277,7 @@
         const islamicQuotes = [
             "সাবর আল্লাহর নিকট মর্যাদার।","যারা আল্লাহর পথে সাহায্য করে, তারা ধন্য।","প্রার্থনা ও ভালো কাজের মাধ্যমে বরকত আসে।",
             "রোজা ধৈর্য ও নিয়ন্ত্রণ শেখায়।","সুন্দর আচরণ আল্লাহর প্রিয়।","যে কেউ অন্যের জন্য উপকারী হয়, সে ধন্য।",
-            "प्रत्यেক ইফতার আল্লাহর রহমতের স্মৃতি।","রোজার সময় সৎ ও ন্যায্য আচরণ অপরিহার্য।","ফ্রি ইফতার বিতরণ করাই সওয়াব।",
+            "প্রত্যেক ইফতার আল্লাহর রহমতের স্মৃতি।","রোজার সময় সৎ ও ন্যায্য আচরণ অপরিহার্য।","ফ্রি ইফতার বিতরণ করাই সওয়াব।",
             "আল্লাহর নিকট হালাল খাওয়া বরকত বৃদ্ধি করে।","যে আল্লাহর নাম নিয়ে খায়, তার খাবারে বরকত থাকে।","রোজা আত্মশুদ্ধি ও নিয়ন্ত্রণ শেখায়।",
             "দরিদ্রকে খাওয়ানো মহান আমল।","প্রত্যেক ইফতার একটি দান।","আল্লাহর জন্য সাহায্য ও দান বরকত আনে।",
             "সাহায্য করা আল্লাহর নিকট প্রিয়।","রোজা ক্ষুধা সহ্য করতে শেখায়।","ভালো কাজ আল্লাহর কাছে গ্রহণযোগ্য।",
@@ -294,7 +313,3 @@
     </script>
 </body>
 </html>
-
-
-
-
