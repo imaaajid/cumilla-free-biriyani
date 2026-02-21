@@ -20,8 +20,11 @@
         .biriyani-marker { font-size: 28px; text-shadow: 0 0 10px rgba(0,0,0,0.3); cursor: pointer; }
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
         .dark .glass { background: rgba(31, 41, 55, 0.85); }
-        #preloader { position: fixed; inset: 0; background: white; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; text-align: center; }
+        
+        /* Preloader Centralized */
+        #preloader { position: fixed; inset: 0; background: white; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         .dark #preloader { background: #111827; color: white; }
+        
         @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         .animate-marquee { display: inline-block; animation: marquee 20s linear infinite; }
         .fade-quote { opacity: 0; transition: opacity 1s ease-in-out; }
@@ -33,8 +36,8 @@
 <body class="bg-orange-50 dark:bg-gray-900 dark:text-gray-100 pb-40">
 
     <div id="preloader">
-        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_m6cuL6.json" background="transparent" speed="1" style="width: 180px;" loop autoplay></lottie-player>
-        <p class="text-orange-600 font-bold mt-4 animate-pulse text-lg" id="preloader-text">লোড হচ্ছে...</p>
+        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_m6cuL6.json" background="transparent" speed="1" style="width: 200px;" loop autoplay></lottie-player>
+        <p class="text-orange-600 font-bold mt-4 animate-pulse text-xl px-4" id="preloader-text"></p>
     </div>
 
     <div id="adminBadge" class="admin-badge hidden shadow-lg animate-pulse">ADMIN MODE ACTIVE</div>
@@ -63,12 +66,9 @@
     </header>
 
     <div class="max-w-md mx-auto px-4 mt-6 flex gap-2">
-        <div class="relative flex-1">
-            <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
-            <input id="search-input" oninput="applyFilters()" placeholder="এলাকা খুঁজুন..." class="w-full pl-10 pr-4 py-3 rounded-2xl border dark:bg-gray-800 dark:border-gray-700 focus:ring-2 focus:ring-orange-500 outline-none transition-all text-sm">
-        </div>
-        <select id="food-filter" onchange="applyFilters()" class="px-4 py-3 rounded-2xl border dark:bg-gray-800 dark:border-gray-700 focus:ring-2 focus:ring-orange-500 outline-none text-sm font-bold bg-white dark:text-white cursor-pointer">
-            <option value="">সব বিরিয়ানি</option>
+        <input id="search-input" oninput="applyFilters()" placeholder="এলাকা খুঁজুন..." class="flex-1 p-3 rounded-xl border dark:bg-gray-800 dark:border-gray-700 outline-none text-sm">
+        <select id="food-filter" onchange="applyFilters()" class="p-3 rounded-xl border dark:bg-gray-800 dark:border-gray-700 text-sm font-bold bg-white dark:text-white">
+            <option value="">সব</option>
             <option value="কাচ্চি">কাচ্চি</option>
             <option value="তেহারি">তেহারি</option>
             <option value="গরু">গরু</option>
@@ -90,12 +90,12 @@
             <input id="user-name" type="text" placeholder="আপনার নাম" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border border-transparent focus:border-orange-500">
             <input id="loc-name" type="text" placeholder="এলাকার নাম" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border border-transparent focus:border-orange-500">
             <select id="food-type" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border border-transparent focus:border-orange-500 font-bold">
-                <option value="কাচ্চি">টাইপ: কাচ্চি</option>
-                <option value="তেহারি">টাইপ: তেহারি</option>
-                <option value="গরু">টাইপ: গরু বিরিয়ানি</option>
-                <option value="চিকেন">টাইপ: চিকেন বিরিয়ানি</option>
+                <option value="কাচ্চি">কাচ্চি</option>
+                <option value="তেহারি">তেহারি</option>
+                <option value="গরু">গরু বিরিয়ানি</option>
+                <option value="চিকেন">চিকেন বিরিয়ানি</option>
             </select>
-            <textarea id="loc-desc" placeholder="বিস্তারিত লিখুন (প্যাকেট সংখ্যা বা সময়)..." class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-6 outline-none h-24 dark:text-white border border-transparent focus:border-orange-500"></textarea>
+            <textarea id="loc-desc" placeholder="বিস্তারিত লিখুন..." class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-6 outline-none h-24 dark:text-white border border-transparent focus:border-orange-500"></textarea>
             <div class="flex gap-4">
                 <button onclick="toggleForm()" class="flex-1 font-bold text-gray-400">বাতিল</button>
                 <button onclick="saveData()" id="submit-btn" class="flex-[2] bg-orange-600 text-white py-4 rounded-2xl font-black shadow-lg">ম্যাপে সেভ করুন</button>
@@ -103,10 +103,9 @@
         </div>
     </div>
 
-    <div id="islamic-quote" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-6 py-3 rounded-xl shadow-lg fade-quote z-50 text-center font-semibold text-sm w-[80%] max-w-xs border border-orange-100 dark:border-gray-700"></div>
+    <div id="islamic-quote" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-6 py-3 rounded-xl shadow-lg fade-quote z-50 text-center font-semibold text-sm w-[85%] max-w-xs border border-orange-100 dark:border-gray-700"></div>
 
     <script>
-        // DB CONFIG
         const DB_URL = "https://cumilla-biriyani-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json";
         const ADMIN_SECRET = "biriyaniadmin2026";
         const urlParams = new URLSearchParams(window.location.search);
@@ -116,7 +115,11 @@
 
         let map, markersLayer, userCoords = { lat: 23.4607, lon: 91.1809 }, allPosts = [];
 
-        // INITIALIZE MAP
+        // Preloader Message Setup (Centered via CSS)
+        const preloaderMsgs = ["বিরিয়ানি রাস্তা খুঁজছে… 🍖","ইফতার অভিযান শুরু হচ্ছে… 🏹🌙","আপনার ক্ষুধা রেডি করা হচ্ছে… 😋","কাচ্চি ও তেহারি আপডেট হচ্ছে… 🍗","লাইভ স্পট ম্যাপ ম্যাজিক চলছে… ✨","নতুন বিরিয়ানি পয়েন্ট সার্চিং… 🔍"];
+        document.getElementById('preloader-text').innerText = preloaderMsgs[Math.floor(Math.random()*preloaderMsgs.length)];
+
+        // Map Init
         map = L.map('map', { zoomControl: false }).setView([userCoords.lat, userCoords.lon], 14);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
         markersLayer = L.layerGroup().addTo(map);
@@ -125,161 +128,112 @@
             navigator.geolocation.getCurrentPosition(pos => {
                 userCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
                 map.setView([userCoords.lat, userCoords.lon], 15);
-                L.circleMarker([userCoords.lat, userCoords.lon], { radius: 6, color: '#3b82f6', fillOpacity: 1 }).addTo(map).bindPopup("আপনার অবস্থান");
+                L.circleMarker([userCoords.lat, userCoords.lon], { radius: 6, color: '#3b82f6', fillOpacity: 1 }).addTo(map);
                 fetchData();
             }, () => fetchData());
         }
 
-        // Fetch Data
         async function fetchData() {
             try {
                 const res = await fetch(DB_URL);
                 const data = await res.json();
                 allPosts = data ? Object.keys(data).map(id => ({ id, ...data[id] })).reverse() : [];
-                applyFilters(); // Initial render with current filters
+                applyFilters();
             } catch (e) { console.error(e); }
         }
 
-        // Apply Filters & Search
         function applyFilters() {
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
             const foodType = document.getElementById('food-filter').value;
-
-            const filtered = allPosts.filter(post => {
-                const matchesSearch = post.location.toLowerCase().includes(searchTerm) || 
-                                     (post.description && post.description.toLowerCase().includes(searchTerm));
-                const matchesType = foodType === "" || post.foodType === foodType;
-                return matchesSearch && matchesType;
+            const filtered = allPosts.filter(p => {
+                const matchSearch = p.location.toLowerCase().includes(searchTerm);
+                const matchType = foodType === "" || p.foodType === foodType;
+                return matchSearch && matchType;
             });
-
             renderUI(filtered);
         }
 
-        // Render UI
         function renderUI(posts) {
             const container = document.getElementById('post-container');
-            container.innerHTML = ""; 
-            markersLayer.clearLayers();
+            container.innerHTML = ""; markersLayer.clearLayers();
             document.getElementById('active-count').innerText = posts.length;
 
             posts.forEach(post => {
                 const isVerified = (post.true_count || 0) >= 5;
-                const totalVotes = (post.true_count || 0) + (post.fake_count || 0);
-                const percent = totalVotes ? Math.round((post.true_count || 0) / totalVotes * 100) : 0;
-                // Fixed Google Maps URL
+                const total = (post.true_count || 0) + (post.fake_count || 0);
+                const percent = total ? Math.round((post.true_count || 0) / total * 100) : 0;
                 const gMapsUrl = `https://www.google.com/maps/search/?api=1&query=${post.lat},${post.lon}`;
 
-                // Map Marker
-                const icon = L.divIcon({ className: 'biriyani-marker', html: '🍖', iconSize: [30, 30] });
-                L.marker([post.lat, post.lon], { icon }).addTo(markersLayer)
-                 .bindPopup(`<b>${post.location}</b><br><span style="font-size:10px">${post.foodType || ''}</span><br><a href="${gMapsUrl}" target="_blank" style="color:blue;font-weight:bold;">গুগল ম্যাপে রাস্তা দেখুন</a>`);
+                L.marker([post.lat, post.lon], { icon: L.divIcon({className:'biriyani-marker', html:'🍖'}) }).addTo(markersLayer)
+                 .bindPopup(`<b>${post.location}</b><br><a href="${gMapsUrl}" target="_blank">ম্যাপ দেখুন</a>`);
 
-                // UI Card
                 container.innerHTML += `
-                    <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] p-7 shadow-lg border border-orange-50 dark:border-gray-700 relative">
-                        ${isAdmin ? `
-                            <div class="absolute top-4 right-6 flex gap-2">
-                                <button onclick="deletePost('${post.id}')" class="text-red-500 p-1"><i class="fa-solid fa-trash"></i></button>
-                            </div>
-                        ` : ''}
-
+                    <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] p-7 shadow-lg border border-orange-50 dark:border-gray-700">
                         <div class="flex justify-between items-center mb-4">
-                            <span class="text-[9px] font-black text-gray-400 uppercase bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded-md tracking-tighter">
-                                ${new Date(post.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} আপডেট | ${post.foodType || 'বিরিয়ানি'}
-                            </span>
+                            <span class="text-[9px] font-black text-gray-400 uppercase bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded-md">${new Date(post.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} | ${post.foodType || 'বিরিয়ানি'}</span>
                             <button onclick="shareLink('${post.location}')" class="text-orange-500"><i class="fa fa-share-nodes"></i></button>
                         </div>
-
-                        <a href="${gMapsUrl}" target="_blank" class="block group">
-                            <h3 class="text-2xl font-black mb-1 flex items-center gap-1 group-active:text-orange-600 transition-colors">
-                                📍 ${post.location}
-                                ${isVerified ? '<i class="fa-solid fa-circle-check text-blue-500 text-sm" title="Verified Spot"></i>' : ''}
-                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-gray-300 ml-1"></i>
-                            </h3>
-                        </a>
-
-                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">${post.description || 'কোনো বর্ণনা নেই'}</p>
-
-                        <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full mb-4">
-                            <div class="bg-green-500 progress-bar" style="width: ${percent}%"></div>
+                        <h3 class="text-2xl font-black mb-1">📍 ${post.location} ${isVerified ? '👑' : ''}</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">${post.description || ''}</p>
+                        <div class="w-full bg-gray-100 dark:bg-gray-700 h-1.5 rounded-full mb-4"><div class="bg-green-500 h-full rounded-full" style="width:${percent}%"></div></div>
+                        <div class="flex gap-2 mb-3">
+                            <button onclick="handleVote('${post.id}', 'true_count')" class="flex-1 bg-green-50 dark:bg-green-900/20 py-3 rounded-xl text-xs font-bold text-green-600">✅ সত্যি (${post.true_count || 0})</button>
+                            <button onclick="handleVote('${post.id}', 'fake_count')" class="flex-1 bg-red-50 dark:bg-red-900/20 py-3 rounded-xl text-xs font-bold text-red-600">❌ মিথ্যা (${post.fake_count || 0})</button>
                         </div>
-
-                        <div class="space-y-3">
-                            <div class="flex gap-2">
-                                <button onclick="handleVote('${post.id}', 'true_count')" class="flex-1 bg-green-50 dark:bg-green-900/20 py-3 rounded-xl text-xs font-bold text-green-600 active:scale-95 transition-all">
-                                    ✅ সত্যি (${post.true_count || 0})
-                                </button>
-                                <button onclick="handleVote('${post.id}', 'fake_count')" class="flex-1 bg-red-50 dark:bg-red-900/20 py-3 rounded-xl text-xs font-bold text-red-600 active:scale-95 transition-all">
-                                    ❌ মিথ্যা (${post.fake_count || 0})
-                                </button>
-                            </div>
-                            <a href="${gMapsUrl}" target="_blank" class="block w-full bg-blue-600 text-white py-3 rounded-xl text-xs font-bold text-center shadow-md active:bg-blue-700 transition-all">
-                                🗺️ গুগল ম্যাপে রাস্তা দেখুন
-                            </a>
-                        </div>
+                        <a href="${gMapsUrl}" target="_blank" class="block w-full bg-blue-600 text-white py-3 rounded-xl text-xs font-bold text-center">🗺️ গুগল ম্যাপে যান</a>
                     </div>
                 `;
             });
-            document.getElementById('preloader').style.display = 'none';
+            setTimeout(() => document.getElementById('preloader').style.display = 'none', 1000);
         }
 
-        // Voting System
         async function handleVote(id, type) {
-            let voted = JSON.parse(localStorage.getItem("votes") || "{}");
-            if(voted[id]) { alert("ইতিমধ্যে ভোট দিয়েছেন!"); return; }
-
+            let voted = JSON.parse(localStorage.getItem("voted_ids") || "{}");
+            if(voted[id]) return alert("ইতিমধ্যে ভোট দিয়েছেন!");
             const res = await fetch(DB_URL.replace('.json', `/${id}.json`));
-            const post = await res.json();
-            const update = {}; update[type] = (post[type] || 0) + 1;
-            
+            const data = await res.json();
+            const update = {}; update[type] = (data[type] || 0) + 1;
             await fetch(DB_URL.replace('.json', `/${id}.json`), { method: 'PATCH', body: JSON.stringify(update) });
-            voted[id] = true; localStorage.setItem("votes", JSON.stringify(voted));
+            voted[id] = true; localStorage.setItem("voted_ids", JSON.stringify(voted));
             fetchData();
         }
 
-        // Save Data
         async function saveData() {
-            const user = document.getElementById('user-name').value || "অজ্ঞাত";
             const loc = document.getElementById('loc-name').value;
-            const desc = document.getElementById('loc-desc').value;
-            const type = document.getElementById('food-type').value;
-            
-            if(!loc) return alert("এলাকার নাম লিখুন!");
-            
+            if(!loc) return alert("লোকেশন নাম দিন!");
             document.getElementById('submit-btn').innerText = "সেভ হচ্ছে...";
             await fetch(DB_URL, { 
                 method: 'POST', 
                 body: JSON.stringify({ 
-                    user, location: loc, description: desc, foodType: type,
-                    timestamp: Date.now(), lat: userCoords.lat, lon: userCoords.lon, 
-                    true_count: 0, fake_count: 0 
+                    location: loc, description: document.getElementById('loc-desc').value,
+                    foodType: document.getElementById('food-type').value, timestamp: Date.now(),
+                    lat: userCoords.lat, lon: userCoords.lon, true_count: 0, fake_count: 0
                 })
             });
-            
-            document.getElementById('submit-btn').innerText = "ম্যাপে সেভ করুন";
             toggleForm(); fetchData();
+            document.getElementById('submit-btn').innerText = "ম্যাপে সেভ করুন";
         }
 
-        // Admin Delete
-        async function deletePost(id) {
-            if(!confirm("ডিলিট করবেন?")) return;
-            await fetch(DB_URL.replace('.json', `/${id}.json`), { method: 'DELETE' });
-            fetchData();
+        // Islamic Quotes logic (30 seconds interval)
+        const islamicQuotes = ["সাবর আল্লাহর নিকট মর্যাদার।","যারা আল্লাহর পথে সাহায্য করে, তারা ধন্য।","প্রার্থনা ও ভালো কাজের মাধ্যমে বরকত আসে।","রোজা ধৈর্য ও নিয়ন্ত্রণ শেখায়।","সুন্দর আচরণ আল্লাহর প্রিয়।","দরিদ্রকে খাওয়ানো মহান আমল।","আল্লাহর জন্য দেওয়া প্রতিটি খাবার সওয়াব।"];
+        let qIdx = 0;
+        function updateQuote() {
+            const qDiv = document.getElementById('islamic-quote');
+            qDiv.classList.remove('show');
+            setTimeout(() => {
+                qDiv.innerText = islamicQuotes[qIdx];
+                qDiv.classList.add('show');
+                qIdx = (qIdx + 1) % islamicQuotes.length;
+            }, 1000);
         }
+        updateQuote();
+        setInterval(updateQuote, 30000); // 30 seconds
 
-        // Utils
-        function toggleDarkMode() { 
-            document.documentElement.classList.toggle('dark'); 
-            document.getElementById('dark-icon').className = document.documentElement.classList.contains('dark') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-        }
+        // Other Utils
+        function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
         function toggleForm() { document.getElementById('add-form').classList.toggle('hidden'); }
-        function shareLink(loc) { 
-            const text = `🍖 কুমিল্লায় ফ্রি বিরিয়ানি: ${loc}\nম্যাপ: ${window.location.href}`;
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`); 
-        }
-        function requestNotify() { Notification.requestPermission().then(perm => { if(perm === "granted") alert("অন হয়েছে!"); }); }
+        function shareLink(loc) { window.open(`https://api.whatsapp.com/send?text=Free Biriyani at ${loc} - Track here: ${window.location.href}`); }
 
-        // Timer
         setInterval(() => {
             const now = new Date(); const iftar = new Date(); iftar.setHours(18, 15, 0);
             if (now > iftar) iftar.setDate(iftar.getDate() + 1);
@@ -288,19 +242,7 @@
             document.getElementById('countdown').innerText = `ইফতারের বাকি: ${h}:${m}:${s}`;
         }, 1000);
 
-        const islamicQuotes = ["দরিদ্রকে খাওয়ানো মহান আমল।","সুন্দর আচরণ আল্লাহর প্রিয়।","রোজা ধৈর্য ও নিয়ন্ত্রণ শেখায়।"];
-        let quoteIndex=0;
-        setInterval(()=>{
-            const q = document.getElementById('islamic-quote');
-            q.classList.remove('show');
-            setTimeout(()=>{
-                q.innerText=islamicQuotes[quoteIndex]; q.classList.add('show');
-                quoteIndex=(quoteIndex+1)%islamicQuotes.length;
-            },500);
-        },30000);
-
         fetchData();
-        setInterval(fetchData, 30000); // Auto refresh every 30s
     </script>
 </body>
 </html>
