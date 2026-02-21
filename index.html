@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cumilla Biriyani Tracker | All-in-One Master</title>
+    <title>Cumilla Biriyani Tracker | Ultimate Master</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
@@ -17,88 +17,93 @@
 
     <style>
         body { font-family: 'Hind Siliguri', sans-serif; transition: 0.3s; }
-        #map { height: 300px; width: 100%; border-bottom: 4px solid #ea580c; z-index: 10; }
+        #map { height: 350px; width: 100%; border-bottom: 4px solid #ea580c; z-index: 10; background: #eee; }
         .dark #map { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
-        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
-        .dark .glass { background: rgba(31, 41, 55, 0.8); }
+        .biriyani-marker { font-size: 26px; text-align: center; }
         #preloader { position: fixed; inset: 0; background: white; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .dark #preloader { background: #111827; }
         .stock-out { filter: grayscale(1); opacity: 0.5; }
+        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        .dark .glass { background: rgba(31, 41, 55, 0.8); }
     </style>
 </head>
 <body class="bg-orange-50 dark:bg-gray-900 dark:text-gray-100 pb-40">
 
     <div id="preloader">
         <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_m6cuL6.json" background="transparent" speed="1" style="width: 200px;" loop autoplay></lottie-player>
-        <p class="text-orange-600 font-bold animate-pulse">সব ফিচার লোড হচ্ছে...</p>
+        <p class="text-orange-600 font-bold mt-4 animate-pulse">সব ফিচার লোড হচ্ছে...</p>
     </div>
 
-    <div class="bg-stone-900 text-white py-3 px-4 flex justify-between items-center sticky top-0 z-[60]">
+    <div class="bg-stone-900 text-white py-3 px-4 flex justify-between items-center sticky top-0 z-[60] shadow-md">
         <div class="text-[11px] font-bold text-orange-400" id="countdown">ইফতারের বাকি: --:--:--</div>
-        <div class="flex gap-3">
-            <button onclick="showLeaderboard()" class="text-[10px] bg-orange-600 px-2 py-1 rounded-full font-bold">🏆 লিডারবোর্ড</button>
+        <div class="flex gap-4">
+            <button onclick="showLeaderboard()" class="text-[10px] bg-orange-600 px-3 py-1 rounded-full font-bold shadow-lg">🏆 লিডারবোর্ড</button>
             <button onclick="toggleDarkMode()" class="text-orange-400"><i id="dark-icon" class="fa-solid fa-moon"></i></button>
         </div>
     </div>
 
     <div id="map"></div>
 
-    <header class="py-6 px-4 text-center glass sticky top-[44px] z-50 border-b dark:border-gray-700">
-        <h1 class="text-2xl font-black text-orange-600 tracking-tighter">CUMILLA BIRIYANI 🍖</h1>
-        <p class="text-[10px] font-bold opacity-60 uppercase mt-1">Live Tracking & Distance Enabled</p>
+    <header class="py-6 px-4 text-center glass border-b dark:border-gray-700 sticky top-[48px] z-50">
+        <h1 class="text-2xl font-black text-orange-600 uppercase tracking-tighter">CUMILLA BIRIYANI 🍖</h1>
+        <div class="mt-2 inline-flex items-center gap-2 bg-orange-100 dark:bg-gray-700 text-orange-700 dark:text-orange-400 px-4 py-1 rounded-full text-[10px] font-bold">
+            <span class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span> লাইভ ম্যাপ ট্র্যাকিং একটিভ
+        </div>
     </header>
 
     <main id="post-container" class="max-w-md mx-auto px-4 mt-8 space-y-6"></main>
 
     <div id="leaderboard-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-[110] flex items-center justify-center p-6">
-        <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-[2.5rem] p-8">
-            <h2 class="text-xl font-black mb-6 text-orange-600 text-center">🏆 সেরা অবদানকারী</h2>
+        <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-[2.5rem] p-8 shadow-2xl">
+            <h2 class="text-2xl font-black mb-6 text-center text-orange-600">🏆 সেরা অবদানকারী</h2>
             <div id="leaderboard-list" class="space-y-3"></div>
             <button onclick="showLeaderboard()" class="w-full mt-6 py-3 bg-gray-100 dark:bg-gray-700 rounded-2xl font-bold">বন্ধ করুন</button>
         </div>
     </div>
 
     <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-40">
-        <button onclick="toggleForm()" class="w-full bg-orange-600 text-white font-black py-4 rounded-3xl shadow-2xl flex items-center justify-center gap-3 border-4 border-white dark:border-gray-800">
-            <i class="fa-solid fa-plus-circle"></i> লোকেশন শেয়ার করুন
+        <button onclick="toggleForm()" class="w-full bg-orange-600 text-white font-black py-4 rounded-3xl shadow-2xl flex items-center justify-center gap-3 border-4 border-white dark:border-gray-800 active:scale-95 transition-all">
+            <i class="fa-solid fa-location-arrow"></i> বিরিয়ানি পয়েন্ট অ্যাড করুন
         </button>
     </div>
 
-    <div id="add-form" class="hidden fixed inset-0 bg-black/70 backdrop-blur-md flex items-end justify-center z-[110]">
-        <div class="bg-white dark:bg-gray-800 w-full max-w-md p-8 rounded-t-[3rem]">
-            <h2 class="text-xl font-bold mb-4">বিরিয়ানি আপডেট দিন 📝</h2>
-            <input id="user-name" type="text" placeholder="আপনার নাম" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none">
-            <input id="loc-name" type="text" placeholder="এলাকার নাম" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none">
-            <input id="contact-info" type="text" placeholder="ফোন নম্বর / সোশ্যাল লিঙ্ক" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none">
-            <textarea id="loc-desc" placeholder="বিস্তারিত..." class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-6 outline-none h-20"></textarea>
+    <div id="add-form" class="hidden fixed inset-0 bg-black/70 backdrop-blur-md flex items-end justify-center z-[120]">
+        <div class="bg-white dark:bg-gray-800 w-full max-w-md p-8 rounded-t-[3rem] shadow-2xl">
+            <h2 class="text-xl font-bold mb-4">নতুন বিরিয়ানি আপডেট 📝</h2>
+            <input id="user-name" type="text" placeholder="আপনার নাম" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white">
+            <input id="loc-name" type="text" placeholder="এলাকার নাম" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white">
+            <input id="contact-info" type="text" placeholder="ফোন নম্বর / সোশ্যাল লিঙ্ক (অপশনাল)" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white">
+            <textarea id="loc-desc" placeholder="বিস্তারিত লিখুন..." class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-6 outline-none h-20 dark:text-white"></textarea>
             <div class="flex gap-4">
                 <button onclick="toggleForm()" class="flex-1 font-bold text-gray-400">বাতিল</button>
-                <button onclick="saveData()" id="submit-btn" class="flex-[2] bg-orange-600 text-white py-4 rounded-2xl font-black">পাবলিশ</button>
+                <button onclick="saveData()" id="submit-btn" class="flex-[2] bg-orange-600 text-white py-4 rounded-2xl font-black">পাবলিশ করুন</button>
             </div>
         </div>
     </div>
 
     <script>
         const DB_URL = "https://cumilla-biriyani-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json";
-        let map, markersLayer, userCoords = { lat: 23.4607, lon: 91.1809 };
+        let map, markersLayer;
+        let userCoords = { lat: 23.4607, lon: 91.1809 }; // Default: Cumilla Kandirpar
 
         // Init Map
-        map = L.map('map').setView([userCoords.lat, userCoords.lon], 13);
+        map = L.map('map', { zoomControl: false }).setView([userCoords.lat, userCoords.lon], 14);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
         markersLayer = L.layerGroup().addTo(map);
 
+        // Get GPS Location
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(pos => {
                 userCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-                map.setView([userCoords.lat, userCoords.lon], 14);
-                L.circle([userCoords.lat, userCoords.lon], {radius: 200, color: 'blue'}).addTo(map).bindPopup("আপনি এখানে");
+                map.setView([userCoords.lat, userCoords.lon], 15);
+                L.circleMarker([userCoords.lat, userCoords.lon], { radius: 6, color: '#3b82f6', fillOpacity: 1 }).addTo(map).bindPopup("আপনি এখানে");
                 fetchData();
             }, () => fetchData());
         }
 
         function calculateDistance(lat2, lon2) {
             if (!lat2) return "দূরত্ব অজানা";
-            const R = 6371;
+            const R = 6371; 
             const dLat = (lat2 - userCoords.lat) * Math.PI / 180;
             const dLon = (lon2 - userCoords.lon) * Math.PI / 180;
             const a = Math.sin(dLat/2)**2 + Math.cos(userCoords.lat * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLon/2)**2;
@@ -107,46 +112,53 @@
         }
 
         async function fetchData() {
-            const res = await fetch(DB_URL);
-            const data = await res.json();
-            const posts = data ? Object.keys(data).map(id => ({ id, ...data[id] })).reverse() : [];
-            renderUI(posts);
-            updateLeaderboard(posts);
+            try {
+                const res = await fetch(DB_URL);
+                const data = await res.json();
+                const posts = data ? Object.keys(data).map(id => ({ id, ...data[id] })).reverse() : [];
+                renderUI(posts);
+                updateLeaderboard(posts);
+            } catch (e) { console.error(e); }
         }
 
         function renderUI(posts) {
             const container = document.getElementById('post-container');
-            container.innerHTML = ""; markersLayer.clearLayers();
-            
+            container.innerHTML = "";
+            markersLayer.clearLayers();
+
             posts.forEach(post => {
-                if ((Date.now() - post.timestamp) > 86400000) return;
                 const dist = calculateDistance(post.lat, post.lon);
                 const isOut = (post.stock_out || 0) >= 5;
+                
+                // Add Marker with Custom Icon
+                if (post.lat && post.lon) {
+                    const icon = L.divIcon({ className: 'biriyani-marker', html: '🍖', iconSize: [30, 30] });
+                    L.marker([post.lat, post.lon], { icon }).addTo(markersLayer).bindPopup(`<b>${post.location}</b><br>${post.description}`);
+                }
 
+                // Add Card
                 container.innerHTML += `
-                    <div class="bg-white dark:bg-gray-800 rounded-[2rem] p-6 shadow-lg border dark:border-gray-700 ${isOut ? 'stock-out' : ''}">
-                        <div class="flex justify-between items-center mb-4 text-[10px] font-bold">
-                            <span class="text-orange-600 bg-orange-50 dark:bg-orange-900/30 px-2 py-1 rounded-full">📍 ${dist} দূরে</span>
-                            <button onclick="shareSmartly('${post.location}', '${post.description}')" class="text-gray-400"><i class="fa fa-share"></i></button>
+                    <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] p-7 shadow-lg border dark:border-gray-700 relative ${isOut ? 'stock-out' : ''}">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="bg-orange-100 dark:bg-orange-900/40 text-orange-600 text-[10px] px-3 py-1 rounded-full font-bold">📍 ${dist} দূরে</span>
+                            <button onclick="shareSmartly('${post.location}', '${post.description}')" class="text-orange-500"><i class="fa-solid fa-share-nodes"></i></button>
                         </div>
-                        <h3 class="text-xl font-black">📍 ${post.location}</h3>
-                        <p class="text-gray-500 text-sm mt-1 mb-4">${post.description}</p>
+                        <h3 class="text-2xl font-black mb-1">📍 ${post.location}</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">${post.description}</p>
+                        
                         <div class="flex gap-2 mb-4">
-                            ${post.contact ? `<a href="${post.contact.includes('http') ? post.contact : 'tel:'+post.contact}" class="flex-1 bg-green-600 text-white text-center py-2 rounded-xl text-xs font-bold">কল করুন</a>` : ''}
-                            <button onclick="handleVote('${post.id}', 'stock_out')" class="flex-1 bg-red-100 text-red-600 py-2 rounded-xl text-xs font-bold">বিরিয়ানি শেষ?</button>
+                            ${post.contact ? `<a href="${post.contact.includes('http') ? post.contact : 'tel:'+post.contact}" class="flex-1 bg-green-600 text-white text-center py-3 rounded-xl font-bold text-xs">কল/যোগাযোগ</a>` : ''}
+                            <button onclick="handleVote('${post.id}', 'stock_out')" class="flex-1 bg-red-100 dark:bg-red-900/20 text-red-600 py-3 rounded-xl font-bold text-xs text-center">বিরিয়ানি শেষ?</button>
                         </div>
-                        <div class="flex gap-2 text-[10px]">
-                            <button onclick="handleVote('${post.id}', 'true_count')" class="flex-1 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg">✅ সত্যি (${post.true_count || 0})</button>
-                            <button onclick="handleVote('${post.id}', 'fake_count')" class="flex-1 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg">❌ ভুয়া (${post.fake_count || 0})</button>
+
+                        <div class="flex gap-3">
+                            <button onclick="handleVote('${post.id}', 'true_count')" class="flex-1 py-3 bg-gray-50 dark:bg-gray-700 rounded-xl text-xs font-bold">✅ সত্যি (${post.true_count || 0})</button>
+                            <button onclick="handleVote('${post.id}', 'fake_count')" class="flex-1 py-3 bg-gray-50 dark:bg-gray-700 rounded-xl text-xs font-bold">❌ ভুয়া (${post.fake_count || 0})</button>
                         </div>
                     </div>
                 `;
-
-                if (post.lat) {
-                    L.marker([post.lat, post.lon]).addTo(markersLayer).bindPopup(`<b>${post.location}</b>`);
-                }
             });
-            setTimeout(() => document.getElementById('preloader').style.display = 'none', 1500);
+            setTimeout(() => document.getElementById('preloader').style.display = 'none', 1000);
         }
 
         async function handleVote(id, type) {
@@ -158,44 +170,52 @@
         }
 
         async function saveData() {
-            const name = document.getElementById('user-name').value || "অজ্ঞাত";
+            const user = document.getElementById('user-name').value || "অজ্ঞাত";
             const loc = document.getElementById('loc-name').value;
             const desc = document.getElementById('loc-desc').value;
             const contact = document.getElementById('contact-info').value;
-            if(!loc) return;
+            if(!loc) return alert("লোকেশন এর নাম দিন!");
+
+            document.getElementById('submit-btn').innerText = "পাবলিশ হচ্ছে...";
             await fetch(DB_URL, { method: 'POST', body: JSON.stringify({
-                user: name, location: loc, description: desc, contact, timestamp: Date.now(),
+                user, location: loc, description: desc, contact, timestamp: Date.now(),
                 lat: userCoords.lat, lon: userCoords.lon, true_count: 0, fake_count: 0, stock_out: 0
             })});
             toggleForm(); fetchData();
         }
 
-        function shareSmartly(l, d) {
-            const t = `🍖 *বিরিয়ানি আপডেট!*\n📍 ${l}\n📝 ${d}\n🔗 ${window.location.href}`;
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(t)}`);
+        function shareSmartly(loc, desc) {
+            const text = `🍖 *ফ্রি বিরিয়ানি আপডেট!*\n📍 লোকেশন: ${loc}\n📝 বিস্তারিত: ${desc}\n🔗 চেক করুন: ${window.location.href}`;
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`);
         }
 
         function updateLeaderboard(posts) {
-            const s = {}; posts.forEach(p => s[p.user] = (s[p.user] || 0) + 1);
-            const sorted = Object.entries(s).sort((a,b) => b[1]-a[1]).slice(0,5);
-            document.getElementById('leaderboard-list').innerHTML = sorted.map(([n, c], i) => `
-                <div class="flex justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-xl">
-                    <span>${i+1}. ${n}</span><span class="font-bold">${c} পোস্ট</span>
+            const scores = {};
+            posts.forEach(p => scores[p.user] = (scores[p.user] || 0) + 1);
+            const sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]).slice(0, 5);
+            document.getElementById('leaderboard-list').innerHTML = sorted.map(([name, count], i) => `
+                <div class="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-2xl">
+                    <span class="font-bold text-sm">${i+1}. ${name}</span>
+                    <span class="bg-orange-600 text-white px-3 py-1 rounded-full text-[10px]">${count}টি পোস্ট</span>
                 </div>`).join('');
         }
 
-        function toggleForm() { document.getElementById('add-form').classList.toggle('hidden'); }
-        function showLeaderboard() { document.getElementById('leaderboard-modal').classList.toggle('hidden'); }
-        function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
-
         setInterval(() => {
-            const now = new Date(); const iftar = new Date(); iftar.setHours(18, 15, 0);
+            const now = new Date();
+            const iftar = new Date(); iftar.setHours(18, 15, 0);
             if (now > iftar) iftar.setDate(iftar.getDate() + 1);
             const diff = iftar - now;
             const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
             document.getElementById('countdown').innerText = `ইফতারের বাকি: ${h}:${m}:${s}`;
         }, 1000);
-        
+
+        function toggleForm() { document.getElementById('add-form').classList.toggle('hidden'); }
+        function showLeaderboard() { document.getElementById('leaderboard-modal').classList.toggle('hidden'); }
+        function toggleDarkMode() { 
+            document.documentElement.classList.toggle('dark');
+            document.getElementById('dark-icon').className = document.documentElement.classList.contains('dark') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+        }
+
         fetchData();
     </script>
 </body>
