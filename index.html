@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cumilla free Biriyani Tracker | </title>
 
+    <link rel="icon" type="image/png" href="https://drive.google.com/thumbnail?id=1C84tHCw6hj4XIzAYnGnGpVdaLrzFA3WR&sz=w64">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Cumilla Free Biriyani Tracker 🥧">
+    <meta property="og:description" content="কুমিল্লার কোথায় ফ্রি বিরিয়ানি বা ইফতার বিতরণ করা হচ্ছে তা লাইভ ম্যাপে দেখুন।">
+    <meta property="og:image" content="https://www.canva.com/design/DAHB_Ta0zpM/ii8zFTLjKY2zPODk8OGa4g/view?embed">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:image" content="https://www.canva.com/design/DAHB_Ta0zpM/ii8zFTLjKY2zPODk8OGa4g/view?embed">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -62,7 +71,7 @@
 
     <div class="bg-orange-600 text-white text-[10px] py-1 font-bold overflow-hidden border-b border-orange-700">
         <div class="animate-marquee whitespace-nowrap">
-            🌙 ইফতারের সময় সঠিক তথ্য দিয়ে অন্যকে সাহায্য করুন। বিরিয়ানি পয়েন্ট অ্যাড করে লিডারবোর্ডে নিজের নাম তুলুন!,রমজান মাসে কাউকে ভুল তথ্য দিয়ে হয়রানি করাবেন না।,
+            🌙 ইফতারের সময় সঠিক তথ্য দিয়ে অন্যকে সাহায্য করুন। বিরিয়ানি পয়েন্ট অ্যাড করে লিডারবোর্ডে নিজের নাম তুলুন!,রমজান মাসে কাউকে ভুল তথ্য দিয়ে হয়রানি করাবেন না।,
         </div>
     </div>
 
@@ -208,7 +217,7 @@
                 const searchQuery = encodeURIComponent(post.location + ", Cumilla");
                 const gMapsUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
 
-                // সময় ও তারিখ ফরম্যাটিং
+                // সময় ও তারিখ ফরম্যাটিং
                 const postDate = new Date(post.timestamp);
                 const formattedTime = postDate.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
                 const formattedDate = postDate.toLocaleDateString('bn-BD', { day: 'numeric', month: 'short' });
@@ -313,5 +322,3 @@
     </script>
 </body>
 </html>
-
-
