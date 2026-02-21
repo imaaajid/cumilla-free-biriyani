@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cumilla Biriyani Tracker | Ultimate Combined Pro</title>
+    <title>Cumilla Biriyani Tracker | Verified Pro</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
@@ -21,7 +21,6 @@
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
         .dark .glass { background: rgba(31, 41, 55, 0.85); }
         
-        /* Preloader Centralized */
         #preloader { position: fixed; inset: 0; background: white; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         .dark #preloader { background: #111827; color: white; }
         
@@ -29,8 +28,10 @@
         .animate-marquee { display: inline-block; animation: marquee 20s linear infinite; }
         .fade-quote { opacity: 0; transition: opacity 1s ease-in-out; }
         .fade-quote.show { opacity: 1; }
-        .progress-bar { height: 6px; border-radius: 20px; transition: width 0.5s ease-in-out; }
+        
+        #leaderboard-box { position: fixed; top: 120px; right: 10px; width: 150px; z-index: 45; }
         .admin-badge { position: fixed; top: 70px; right: 10px; background: red; color: white; padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: bold; z-index: 999; }
+        .blue-tick { color: #1d9bf0; font-size: 0.8em; margin-left: 4px; }
     </style>
 </head>
 <body class="bg-orange-50 dark:bg-gray-900 dark:text-gray-100 pb-40">
@@ -42,17 +43,24 @@
 
     <div id="adminBadge" class="admin-badge hidden shadow-lg animate-pulse">ADMIN MODE ACTIVE</div>
 
+    <div id="leaderboard-box" class="bg-white/90 dark:bg-gray-800/90 backdrop-blur p-3 rounded-2xl shadow-xl border border-orange-200 dark:border-gray-700 hidden sm:block">
+        <h4 class="text-[10px] font-black uppercase text-orange-600 mb-2 border-b border-orange-100 pb-1 flex items-center gap-1">
+            <i class="fa-solid fa-trophy"></i> টপ কন্ট্রিবিউটর
+        </h4>
+        <div id="leaderboard-list" class="space-y-2 max-h-40 overflow-y-auto custom-scrollbar"></div>
+    </div>
+
     <div class="bg-stone-900 text-white py-3 px-4 flex justify-between items-center sticky top-0 z-[60]">
         <div class="text-[11px] font-bold text-orange-400" id="countdown">ইফতারের বাকি: --:--:--</div>
         <div class="flex gap-4 items-center">
-            <button onclick="requestNotify()" title="নোটিফিকেশন" class="text-orange-400 text-sm"><i class="fa-solid fa-bell"></i></button>
+            <button onclick="alert('নোটিফিকেশন চালু হয়েছে!')" title="নোটিফিকেশন" class="text-orange-400 text-sm"><i class="fa-solid fa-bell"></i></button>
             <button onclick="toggleDarkMode()" title="ডার্ক মোড" class="text-orange-400"><i id="dark-icon" class="fa-solid fa-moon"></i></button>
         </div>
     </div>
 
     <div class="bg-orange-600 text-white text-[10px] py-1 font-bold overflow-hidden border-b border-orange-700">
         <div class="animate-marquee whitespace-nowrap">
-            🌙 ইফতারের সময় গুগল ম্যাপ ব্যবহার করে দ্রুত লোকেশনে পৌঁছান। অন্যকে সাহায্য করতে সঠিক তথ্য দিন। মিথ্যা তথ্য দেওয়া থেকে বিরত থাকুন।
+            🌙 ইফতারের সময় সঠিক তথ্য দিয়ে অন্যকে সাহায্য করুন। বিরিয়ানি পয়েন্ট অ্যাড করে লিডারবোর্ডে নিজের নাম তুলুন!
         </div>
     </div>
 
@@ -80,25 +88,25 @@
 
     <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-40">
         <button onclick="toggleForm()" class="w-full bg-orange-600 text-white font-black py-4 rounded-3xl shadow-2xl flex items-center justify-center gap-3 border-4 border-white dark:border-gray-800 active:scale-95 transition-all">
-            <i class="fa-solid fa-location-dot animate-bounce"></i> বিরিয়ানি পয়েন্ট অ্যাড করুন
+            <i class="fa-solid fa-location-dot animate-bounce"></i> বিরিয়ানি পয়েন্ট অ্যাড করুন
         </button>
     </div>
 
     <div id="add-form" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-end justify-center z-[120]">
         <div class="bg-white dark:bg-gray-800 w-full max-w-md p-8 rounded-t-[3rem] shadow-2xl">
             <h2 class="text-xl font-bold mb-4 text-orange-600">নতুন আপডেট দিন 📝</h2>
-            <input id="user-name" type="text" placeholder="আপনার নাম" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border border-transparent focus:border-orange-500">
-            <input id="loc-name" type="text" placeholder="এলাকার নাম" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border border-transparent focus:border-orange-500">
-            <select id="food-type" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border border-transparent focus:border-orange-500 font-bold">
+            <input id="user-name" type="text" placeholder="আপনার নাম (লিডারবোর্ডের জন্য)" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border focus:border-orange-500">
+            <input id="loc-name" type="text" placeholder="সঠিক এলাকার নাম (যেমন: কান্দিরপাড়)" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border focus:border-orange-500">
+            <select id="food-type" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border focus:border-orange-500 font-bold">
                 <option value="কাচ্চি">কাচ্চি</option>
                 <option value="তেহারি">তেহারি</option>
                 <option value="গরু">গরু বিরিয়ানি</option>
                 <option value="চিকেন">চিকেন বিরিয়ানি</option>
             </select>
-            <textarea id="loc-desc" placeholder="বিস্তারিত লিখুন..." class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-6 outline-none h-24 dark:text-white border border-transparent focus:border-orange-500"></textarea>
+            <textarea id="loc-desc" placeholder="বিস্তারিত লিখুন (দোকানের নাম বা ল্যান্ডমার্ক)..." class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-6 outline-none h-24 dark:text-white border focus:border-orange-500"></textarea>
             <div class="flex gap-4">
                 <button onclick="toggleForm()" class="flex-1 font-bold text-gray-400">বাতিল</button>
-                <button onclick="saveData()" id="submit-btn" class="flex-[2] bg-orange-600 text-white py-4 rounded-2xl font-black shadow-lg">ম্যাপে সেভ করুন</button>
+                <button onclick="saveData()" id="submit-btn" class="flex-[2] bg-orange-600 text-white py-4 rounded-2xl font-black">ম্যাপে সেভ করুন</button>
             </div>
         </div>
     </div>
@@ -115,11 +123,14 @@
 
         let map, markersLayer, userCoords = { lat: 23.4607, lon: 91.1809 }, allPosts = [];
 
-        // Preloader Message Setup (Centered via CSS)
-        const preloaderMsgs = ["বিরিয়ানি রাস্তা খুঁজছে… 🍖","ইফতার অভিযান শুরু হচ্ছে… 🏹🌙","আপনার ক্ষুধা রেডি করা হচ্ছে… 😋","কাচ্চি ও তেহারি আপডেট হচ্ছে… 🍗","লাইভ স্পট ম্যাপ ম্যাজিক চলছে… ✨","নতুন বিরিয়ানি পয়েন্ট সার্চিং… 🔍"];
+        const preloaderMsgs = [
+            "বিরিয়ানি রাস্তা খুঁজছে… 🍖","ইফতার অভিযান শুরু হচ্ছে… 🏹🌙","আপনার ক্ষুধা রেডি করা হচ্ছে… 😋",
+            "কাচ্চি ও তেহারি আপডেট হচ্ছে… 🍗","লাইভ স্পট ম্যাপ ম্যাজিক চলছে… ✨","নতুন বিরিয়ানি পয়েন্ট সার্চিং… 🔍",
+            "বিরিয়ানি হান্টিং মোড অন… 🕵️‍♂️","চাপা দাও, ইফতার স্পট লোড হচ্ছে… 🚀","ফ্রি বিরিয়ানি আপডেট আনছে… 🎁",
+            "গরম গরম বিরিয়ানি ঠিক আপনার কাছে… 🔥🍛"
+        ];
         document.getElementById('preloader-text').innerText = preloaderMsgs[Math.floor(Math.random()*preloaderMsgs.length)];
 
-        // Map Init
         map = L.map('map', { zoomControl: false }).setView([userCoords.lat, userCoords.lon], 14);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
         markersLayer = L.layerGroup().addTo(map);
@@ -131,7 +142,7 @@
                 L.circleMarker([userCoords.lat, userCoords.lon], { radius: 6, color: '#3b82f6', fillOpacity: 1 }).addTo(map);
                 fetchData();
             }, () => fetchData());
-        }
+        } else { fetchData(); }
 
         async function fetchData() {
             try {
@@ -139,7 +150,24 @@
                 const data = await res.json();
                 allPosts = data ? Object.keys(data).map(id => ({ id, ...data[id] })).reverse() : [];
                 applyFilters();
+                updateLeaderboard(allPosts);
             } catch (e) { console.error(e); }
+        }
+
+        function updateLeaderboard(posts) {
+            const counts = {};
+            posts.forEach(p => {
+                const name = p.userName || "Anonymous";
+                counts[name] = (counts[name] || 0) + 1;
+            });
+            const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 5);
+            const lbList = document.getElementById('leaderboard-list');
+            lbList.innerHTML = sorted.map(([name, count], i) => `
+                <div class="flex justify-between items-center text-[10px] font-bold">
+                    <span class="truncate w-20 text-gray-600 dark:text-gray-300">${i+1}. ${name}</span>
+                    <span class="bg-orange-100 text-orange-600 px-1.5 rounded">${count}</span>
+                </div>
+            `).join('');
         }
 
         function applyFilters() {
@@ -162,7 +190,9 @@
                 const isVerified = (post.true_count || 0) >= 5;
                 const total = (post.true_count || 0) + (post.fake_count || 0);
                 const percent = total ? Math.round((post.true_count || 0) / total * 100) : 0;
-                const gMapsUrl = `https://www.google.com/maps/search/?api=1&query=${post.lat},${post.lon}`;
+                
+                const searchQuery = encodeURIComponent(post.location + ", Cumilla");
+                const gMapsUrl = `https://www.google.com/maps/search/${searchQuery}`;
 
                 L.marker([post.lat, post.lon], { icon: L.divIcon({className:'biriyani-marker', html:'🍖'}) }).addTo(markersLayer)
                  .bindPopup(`<b>${post.location}</b><br><a href="${gMapsUrl}" target="_blank">ম্যাপ দেখুন</a>`);
@@ -170,21 +200,41 @@
                 container.innerHTML += `
                     <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] p-7 shadow-lg border border-orange-50 dark:border-gray-700">
                         <div class="flex justify-between items-center mb-4">
-                            <span class="text-[9px] font-black text-gray-400 uppercase bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded-md">${new Date(post.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} | ${post.foodType || 'বিরিয়ানি'}</span>
-                            <button onclick="shareLink('${post.location}')" class="text-orange-500"><i class="fa fa-share-nodes"></i></button>
+                            <span class="text-[9px] font-black text-gray-400 uppercase bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded-md">
+                                BY: ${post.userName || 'Unknown'} | ${new Date(post.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                            </span>
+                            <div class="flex gap-3">
+                                ${isAdmin ? `<button onclick="deletePost('${post.id}')" class="text-red-500 text-xs"><i class="fa fa-trash"></i></button>` : ''}
+                                <button onclick="shareLink('${post.location}')" class="text-orange-500"><i class="fa fa-share-nodes"></i></button>
+                            </div>
                         </div>
-                        <h3 class="text-2xl font-black mb-1">📍 ${post.location} ${isVerified ? '👑' : ''}</h3>
+                        <h3 class="text-2xl font-black mb-1 flex items-center">📍 ${post.location} ${isVerified ? '<i class="fa-solid fa-circle-check blue-tick"></i>' : ''}</h3>
                         <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">${post.description || ''}</p>
                         <div class="w-full bg-gray-100 dark:bg-gray-700 h-1.5 rounded-full mb-4"><div class="bg-green-500 h-full rounded-full" style="width:${percent}%"></div></div>
                         <div class="flex gap-2 mb-3">
                             <button onclick="handleVote('${post.id}', 'true_count')" class="flex-1 bg-green-50 dark:bg-green-900/20 py-3 rounded-xl text-xs font-bold text-green-600">✅ সত্যি (${post.true_count || 0})</button>
                             <button onclick="handleVote('${post.id}', 'fake_count')" class="flex-1 bg-red-50 dark:bg-red-900/20 py-3 rounded-xl text-xs font-bold text-red-600">❌ মিথ্যা (${post.fake_count || 0})</button>
                         </div>
-                        <a href="${gMapsUrl}" target="_blank" class="block w-full bg-blue-600 text-white py-3 rounded-xl text-xs font-bold text-center">🗺️ গুগল ম্যাপে যান</a>
+                        <a href="${gMapsUrl}" target="_blank" class="block w-full bg-blue-600 text-white py-3 rounded-xl text-xs font-bold text-center">🗺️ গুগল ম্যাপে ${post.location} খুঁজুন</a>
                     </div>
                 `;
             });
             setTimeout(() => document.getElementById('preloader').style.display = 'none', 1000);
+        }
+
+        async function saveData() {
+            const loc = document.getElementById('loc-name').value;
+            const name = document.getElementById('user-name').value || "Anonymous";
+            if(!loc) return alert("লোকেশন নাম দিন!");
+            document.getElementById('submit-btn').innerText = "সেভ হচ্ছে...";
+            const payload = { 
+                userName: name, location: loc, description: document.getElementById('loc-desc').value,
+                foodType: document.getElementById('food-type').value, timestamp: Date.now(),
+                lat: userCoords.lat, lon: userCoords.lon, true_count: 0, fake_count: 0
+            };
+            await fetch(DB_URL, { method: 'POST', body: JSON.stringify(payload) });
+            toggleForm(); fetchData();
+            document.getElementById('submit-btn').innerText = "ম্যাপে সেভ করুন";
         }
 
         async function handleVote(id, type) {
@@ -198,27 +248,26 @@
             fetchData();
         }
 
-        async function saveData() {
-            const loc = document.getElementById('loc-name').value;
-            if(!loc) return alert("লোকেশন নাম দিন!");
-            document.getElementById('submit-btn').innerText = "সেভ হচ্ছে...";
-            await fetch(DB_URL, { 
-                method: 'POST', 
-                body: JSON.stringify({ 
-                    location: loc, description: document.getElementById('loc-desc').value,
-                    foodType: document.getElementById('food-type').value, timestamp: Date.now(),
-                    lat: userCoords.lat, lon: userCoords.lon, true_count: 0, fake_count: 0
-                })
-            });
-            toggleForm(); fetchData();
-            document.getElementById('submit-btn').innerText = "ম্যাপে সেভ করুন";
+        async function deletePost(id) {
+            if(confirm("Delete this post?")) {
+                await fetch(DB_URL.replace('.json', `/${id}.json`), { method: 'DELETE' });
+                fetchData();
+            }
         }
 
-        // Islamic Quotes logic (30 seconds interval)
-        const islamicQuotes = ["সাবর আল্লাহর নিকট মর্যাদার।","যারা আল্লাহর পথে সাহায্য করে, তারা ধন্য।","প্রার্থনা ও ভালো কাজের মাধ্যমে বরকত আসে।","রোজা ধৈর্য ও নিয়ন্ত্রণ শেখায়।","সুন্দর আচরণ আল্লাহর প্রিয়।","দরিদ্রকে খাওয়ানো মহান আমল।","আল্লাহর জন্য দেওয়া প্রতিটি খাবার সওয়াব।"];
+        const islamicQuotes = [
+            "সাবর আল্লাহর নিকট মর্যাদার।","যারা আল্লাহর পথে সাহায্য করে, তারা ধন্য।","প্রার্থনা ও ভালো কাজের মাধ্যমে বরকত আসে।",
+            "রোজা ধৈর্য ও নিয়ন্ত্রণ শেখায়।","সুন্দর আচরণ আল্লাহর প্রিয়।","যে কেউ অন্যের জন্য উপকারী হয়, সে ধন্য।",
+            "प्रत्यেক ইফতার আল্লাহর রহমতের স্মৃতি।","রোজার সময় সৎ ও ন্যায্য আচরণ অপরিহার্য।","ফ্রি ইফতার বিতরণ করাই সওয়াব।",
+            "আল্লাহর নিকট হালাল খাওয়া বরকত বৃদ্ধি করে।","যে আল্লাহর নাম নিয়ে খায়, তার খাবারে বরকত থাকে।","রোজা আত্মশুদ্ধি ও নিয়ন্ত্রণ শেখায়।",
+            "দরিদ্রকে খাওয়ানো মহান আমল।","প্রত্যেক ইফতার একটি দান।","আল্লাহর জন্য সাহায্য ও দান বরকত আনে।",
+            "সাহায্য করা আল্লাহর নিকট প্রিয়।","রোজা ক্ষুধা সহ্য করতে শেখায়।","ভালো কাজ আল্লাহর কাছে গ্রহণযোগ্য।",
+            "রোজা ধৈর্য, নম্রতা ও ধ্যান শেখায়।","আল্লাহর জন্য দেওয়া প্রতিটি খাবার সওয়াব।"
+        ];
         let qIdx = 0;
         function updateQuote() {
             const qDiv = document.getElementById('islamic-quote');
+            if(!qDiv) return;
             qDiv.classList.remove('show');
             setTimeout(() => {
                 qDiv.innerText = islamicQuotes[qIdx];
@@ -227,9 +276,8 @@
             }, 1000);
         }
         updateQuote();
-        setInterval(updateQuote, 30000); // 30 seconds
+        setInterval(updateQuote, 30000);
 
-        // Other Utils
         function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
         function toggleForm() { document.getElementById('add-form').classList.toggle('hidden'); }
         function shareLink(loc) { window.open(`https://api.whatsapp.com/send?text=Free Biriyani at ${loc} - Track here: ${window.location.href}`); }
@@ -239,7 +287,7 @@
             if (now > iftar) iftar.setDate(iftar.getDate() + 1);
             const diff = iftar - now;
             const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
-            document.getElementById('countdown').innerText = `ইফতারের বাকি: ${h}:${m}:${s}`;
+            document.getElementById('countdown').innerText = `ইফতার: ${h}:${m}:${s}`;
         }, 1000);
 
         fetchData();
