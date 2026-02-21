@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cumilla Biriyani Tracker | Navigation Pro</title>
+    <title>Cumilla Biriyani Tracker | Final Pro</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
@@ -30,7 +30,7 @@
 
     <div id="preloader">
         <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_m6cuL6.json" background="transparent" speed="1" style="width: 180px;" loop autoplay></lottie-player>
-        <p class="text-orange-600 font-bold mt-4 animate-pulse">স্মার্ট নেভিগেশন লোড হচ্ছে...</p>
+        <p class="text-orange-600 font-bold mt-4 animate-pulse">সব ফিচার লোড হচ্ছে...</p>
     </div>
 
     <div class="bg-stone-900 text-white py-3 px-4 flex justify-between items-center sticky top-0 z-[60]">
@@ -43,7 +43,7 @@
 
     <div class="bg-orange-600 text-white text-[10px] py-1 font-bold overflow-hidden border-b border-orange-700">
         <div class="animate-marquee whitespace-nowrap">
-            🌙 টিপস: ইফতারের সময় গুগল ম্যাপ ব্যবহার করে দ্রুত লোকেশনে পৌঁছান। ভাজাপোড়া কমিয়ে বেশি পানি পান করুন। অন্যকে সাহায্য করতে সঠিক তথ্য দিন।
+            🌙 ইফতারের সময় গুগল ম্যাপ ব্যবহার করে দ্রুত লোকেশনে পৌঁছান। অন্যকে সাহায্য করতে সঠিক তথ্য দিন। মিথ্যা তথ্য দেওয়া থেকে বিরত থাকুন।
         </div>
     </div>
 
@@ -52,7 +52,7 @@
     <header class="py-6 px-4 text-center glass border-b dark:border-gray-700 sticky top-[44px] z-50 shadow-sm">
         <h1 class="text-2xl font-black text-orange-600 tracking-tighter uppercase">CUMILLA BIRIYANI 🍖</h1>
         <div class="mt-2 inline-flex items-center gap-2 bg-orange-100 dark:bg-gray-700 text-orange-700 dark:text-orange-400 px-4 py-1 rounded-full text-[10px] font-bold">
-            <span class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span> <span id="active-count">0</span>টি লাইভ পয়েন্ট
+            <span class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span> <span id="active-count">0</span>টি লাইভ লোকেশন
         </div>
     </header>
 
@@ -60,16 +60,16 @@
 
     <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-40">
         <button onclick="toggleForm()" class="w-full bg-orange-600 text-white font-black py-4 rounded-3xl shadow-2xl flex items-center justify-center gap-3 border-4 border-white dark:border-gray-800 active:scale-95 transition-all">
-            <i class="fa-solid fa-map-pin animate-bounce"></i> বিরিয়ানি লোকেশন দিন
+            <i class="fa-solid fa-location-dot animate-bounce"></i> বিরিয়ানি পয়েন্ট অ্যাড করুন
         </button>
     </div>
 
     <div id="add-form" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-end justify-center z-[120]">
         <div class="bg-white dark:bg-gray-800 w-full max-w-md p-8 rounded-t-[3rem] shadow-2xl">
             <h2 class="text-xl font-bold mb-4 text-orange-600">নতুন আপডেট দিন 📝</h2>
-            <input id="user-name" type="text" placeholder="আপনার নাম" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border border-transparent focus:border-orange-500">
-            <input id="loc-name" type="text" placeholder="এলাকার নাম" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border border-transparent focus:border-orange-500">
-            <textarea id="loc-desc" placeholder="বিস্তারিত লিখুন (যেমন: চকবাজার মোড়ে ডেক বসানো হয়েছে)..." class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-6 outline-none h-24 dark:text-white border border-transparent focus:border-orange-500"></textarea>
+            <input id="user-name" type="text" placeholder="আপনার নাম" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white">
+            <input id="loc-name" type="text" placeholder="এলাকার নাম" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white">
+            <textarea id="loc-desc" placeholder="বিস্তারিত লিখুন..." class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-6 outline-none h-24 dark:text-white"></textarea>
             
             <div class="flex gap-4">
                 <button onclick="toggleForm()" class="flex-1 font-bold text-gray-400">বাতিল</button>
@@ -117,7 +117,7 @@
                 const isVerified = (post.true_count || 0) >= 5;
                 const gMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${post.lat},${post.lon}`;
 
-                // Marker Logic with Navigation Click
+                // Marker Logic
                 const icon = L.divIcon({ className: 'biriyani-marker', html: '🍖', iconSize: [30, 30] });
                 const marker = L.marker([post.lat, post.lon], { icon }).addTo(markersLayer);
                 marker.bindPopup(`<b>${post.location}</b><br><a href="${gMapsUrl}" target="_blank" style="color:blue">গুগল ম্যাপে যান</a>`);
@@ -140,9 +140,19 @@
 
                         <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">${post.description}</p>
                         
-                        <div class="flex gap-3">
-                            <button onclick="handleVote('${post.id}', 'true_count')" class="flex-1 bg-orange-50 dark:bg-gray-700 py-3 rounded-xl text-xs font-bold text-orange-600 active:bg-orange-200">✅ সত্যি (${post.true_count || 0})</button>
-                            <a href="${gMapsUrl}" target="_blank" class="flex-1 bg-blue-600 text-white py-3 rounded-xl text-xs font-bold text-center shadow-md">🗺️ গুগল ম্যাপ</a>
+                        <div class="space-y-3">
+                            <div class="flex gap-2">
+                                <button onclick="handleVote('${post.id}', 'true_count')" class="flex-1 bg-green-50 dark:bg-green-900/10 py-3 rounded-xl text-xs font-bold text-green-600 active:scale-95 transition-all">
+                                    ✅ সত্যি (${post.true_count || 0})
+                                </button>
+                                <button onclick="handleVote('${post.id}', 'fake_count')" class="flex-1 bg-red-50 dark:bg-red-900/10 py-3 rounded-xl text-xs font-bold text-red-600 active:scale-95 transition-all">
+                                    ❌ মিথ্যা (${post.fake_count || 0})
+                                </button>
+                            </div>
+                            
+                            <a href="${gMapsUrl}" target="_blank" class="block w-full bg-blue-600 text-white py-3 rounded-xl text-xs font-bold text-center shadow-md active:bg-blue-700">
+                                🗺️ গুগল ম্যাপে রাস্তা দেখুন
+                            </a>
                         </div>
                     </div>
                 `;
@@ -153,8 +163,13 @@
         async function handleVote(id, type) {
             const res = await fetch(`https://cumilla-biriyani-default-rtdb.asia-southeast1.firebasedatabase.app/posts/${id}.json`);
             const post = await res.json();
-            const update = {}; update[type] = (post[type] || 0) + 1;
-            await fetch(`https://cumilla-biriyani-default-rtdb.asia-southeast1.firebasedatabase.app/posts/${id}.json`, { method: 'PATCH', body: JSON.stringify(update) });
+            const update = {}; 
+            update[type] = (post[type] || 0) + 1;
+            
+            await fetch(`https://cumilla-biriyani-default-rtdb.asia-southeast1.firebasedatabase.app/posts/${id}.json`, { 
+                method: 'PATCH', 
+                body: JSON.stringify(update) 
+            });
             fetchData();
         }
 
@@ -164,16 +179,13 @@
             const desc = document.getElementById('loc-desc').value;
             if(!loc) return alert("এলাকার নাম লিখুন!");
 
-            document.getElementById('submit-btn').innerText = "ম্যাপে অ্যাড হচ্ছে...";
+            document.getElementById('submit-btn').innerText = "সেভ হচ্ছে...";
             await fetch(DB_URL, { method: 'POST', body: JSON.stringify({
                 user, location: loc, description: desc, timestamp: Date.now(),
-                lat: userCoords.lat, lon: userCoords.lon, true_count: 0
+                lat: userCoords.lat, lon: userCoords.lon, true_count: 0, fake_count: 0
             })});
 
             toggleForm(); fetchData();
-            if (Notification.permission === "granted") {
-                new Notification("নতুন লোকেশন!", { body: `📍 ${loc}-এ বিরিয়ানি পাওয়া যাচ্ছে। ম্যাপে দেখুন!` });
-            }
         }
 
         function requestNotify() {
@@ -183,7 +195,7 @@
         }
 
         function shareLink(loc) {
-            window.open(`https://api.whatsapp.com/send?text=🍖 কুমিল্লায় ফ্রি বিরিয়ানি পাওয়া যাচ্ছে এখানে: ${loc}\nগুগল ম্যাপে দেখতে ক্লিক করুন: ${window.location.href}`);
+            window.open(`https://api.whatsapp.com/send?text=🍖 কুমিল্লায় ফ্রি বিরিয়ানি পাওয়া যাচ্ছে এখানে: ${loc}\nলাইভ ট্র্যাকার ম্যাপ: ${window.location.href}`);
         }
 
         function toggleForm() { document.getElementById('add-form').classList.toggle('hidden'); }
