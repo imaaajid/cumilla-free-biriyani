@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cumilla Biriyani Tracker | Smart Pro</title>
+    <title>Cumilla Biriyani Tracker | Navigation Pro</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
@@ -17,7 +17,7 @@
         body { font-family: 'Hind Siliguri', sans-serif; transition: 0.3s; overflow-x: hidden; }
         #map { height: 350px; width: 100%; border-bottom: 4px solid #ea580c; z-index: 10; background: #eee; }
         .dark #map { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
-        .biriyani-marker { font-size: 28px; text-shadow: 0 0 10px rgba(0,0,0,0.3); }
+        .biriyani-marker { font-size: 28px; text-shadow: 0 0 10px rgba(0,0,0,0.3); cursor: pointer; }
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
         .dark .glass { background: rgba(31, 41, 55, 0.85); }
         #preloader { position: fixed; inset: 0; background: white; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -30,20 +30,20 @@
 
     <div id="preloader">
         <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_m6cuL6.json" background="transparent" speed="1" style="width: 180px;" loop autoplay></lottie-player>
-        <p class="text-orange-600 font-bold mt-4 animate-pulse">স্মার্ট বিরিয়ানি ট্র্যাকার...</p>
+        <p class="text-orange-600 font-bold mt-4 animate-pulse">স্মার্ট নেভিগেশন লোড হচ্ছে...</p>
     </div>
 
     <div class="bg-stone-900 text-white py-3 px-4 flex justify-between items-center sticky top-0 z-[60]">
         <div class="text-[11px] font-bold text-orange-400" id="countdown">ইফতারের বাকি: --:--:--</div>
         <div class="flex gap-4 items-center">
-            <button onclick="requestNotify()" class="text-orange-400 text-sm"><i class="fa-solid fa-bell"></i></button>
-            <button onclick="toggleDarkMode()" class="text-orange-400"><i id="dark-icon" class="fa-solid fa-moon"></i></button>
+            <button onclick="requestNotify()" title="নোটিফিকেশন" class="text-orange-400 text-sm"><i class="fa-solid fa-bell"></i></button>
+            <button onclick="toggleDarkMode()" title="ডার্ক মোড" class="text-orange-400"><i id="dark-icon" class="fa-solid fa-moon"></i></button>
         </div>
     </div>
 
     <div class="bg-orange-600 text-white text-[10px] py-1 font-bold overflow-hidden border-b border-orange-700">
         <div class="animate-marquee whitespace-nowrap">
-            🌙 টিপস: ইফতারে ভাজাপোড়া কমিয়ে ফলমূল ও পানি বেশি পান করুন। আপনার শেয়ার করা তথ্য কুমিল্লার অন্য রোজাদারদের ইফতারে সাহায্য করবে।
+            🌙 টিপস: ইফতারের সময় গুগল ম্যাপ ব্যবহার করে দ্রুত লোকেশনে পৌঁছান। ভাজাপোড়া কমিয়ে বেশি পানি পান করুন। অন্যকে সাহায্য করতে সঠিক তথ্য দিন।
         </div>
     </div>
 
@@ -52,7 +52,7 @@
     <header class="py-6 px-4 text-center glass border-b dark:border-gray-700 sticky top-[44px] z-50 shadow-sm">
         <h1 class="text-2xl font-black text-orange-600 tracking-tighter uppercase">CUMILLA BIRIYANI 🍖</h1>
         <div class="mt-2 inline-flex items-center gap-2 bg-orange-100 dark:bg-gray-700 text-orange-700 dark:text-orange-400 px-4 py-1 rounded-full text-[10px] font-bold">
-            <span class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span> <span id="active-count">0</span>টি একটিভ লোকেশন
+            <span class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span> <span id="active-count">0</span>টি লাইভ পয়েন্ট
         </div>
     </header>
 
@@ -60,20 +60,20 @@
 
     <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-40">
         <button onclick="toggleForm()" class="w-full bg-orange-600 text-white font-black py-4 rounded-3xl shadow-2xl flex items-center justify-center gap-3 border-4 border-white dark:border-gray-800 active:scale-95 transition-all">
-            <i class="fa-solid fa-location-dot"></i> লোকেশন শেয়ার করুন
+            <i class="fa-solid fa-map-pin animate-bounce"></i> বিরিয়ানি লোকেশন দিন
         </button>
     </div>
 
     <div id="add-form" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-end justify-center z-[120]">
         <div class="bg-white dark:bg-gray-800 w-full max-w-md p-8 rounded-t-[3rem] shadow-2xl">
-            <h2 class="text-xl font-bold mb-4">নতুন বিরিয়ানি আপডেট 📝</h2>
-            <input id="user-name" type="text" placeholder="আপনার নাম" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white">
-            <input id="loc-name" type="text" placeholder="এলাকার নাম (যেমন: চকবাজার)" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white">
-            <textarea id="loc-desc" placeholder="বিস্তারিত লিখুন (প্যাকেট সংখ্যা বা সময়)..." class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-6 outline-none h-24 dark:text-white"></textarea>
+            <h2 class="text-xl font-bold mb-4 text-orange-600">নতুন আপডেট দিন 📝</h2>
+            <input id="user-name" type="text" placeholder="আপনার নাম" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border border-transparent focus:border-orange-500">
+            <input id="loc-name" type="text" placeholder="এলাকার নাম" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border border-transparent focus:border-orange-500">
+            <textarea id="loc-desc" placeholder="বিস্তারিত লিখুন (যেমন: চকবাজার মোড়ে ডেক বসানো হয়েছে)..." class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-6 outline-none h-24 dark:text-white border border-transparent focus:border-orange-500"></textarea>
             
             <div class="flex gap-4">
                 <button onclick="toggleForm()" class="flex-1 font-bold text-gray-400">বাতিল</button>
-                <button onclick="saveData()" id="submit-btn" class="flex-[2] bg-orange-600 text-white py-4 rounded-2xl font-black">পাবলিশ করুন</button>
+                <button onclick="saveData()" id="submit-btn" class="flex-[2] bg-orange-600 text-white py-4 rounded-2xl font-black shadow-lg">ম্যাপে সেভ করুন</button>
             </div>
         </div>
     </div>
@@ -82,7 +82,7 @@
         const DB_URL = "https://cumilla-biriyani-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json";
         let map, markersLayer, userCoords = { lat: 23.4607, lon: 91.1809 };
 
-        // 1. Initialize Map
+        // 1. Map Initialization
         map = L.map('map', { zoomControl: false }).setView([userCoords.lat, userCoords.lon], 14);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
         markersLayer = L.layerGroup().addTo(map);
@@ -91,21 +91,19 @@
             navigator.geolocation.getCurrentPosition(pos => {
                 userCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
                 map.setView([userCoords.lat, userCoords.lon], 15);
-                L.circleMarker([userCoords.lat, userCoords.lon], { radius: 6, color: '#3b82f6', fillOpacity: 1 }).addTo(map);
+                L.circleMarker([userCoords.lat, userCoords.lon], { radius: 6, color: '#3b82f6', fillOpacity: 1 }).addTo(map).bindPopup("আপনার অবস্থান");
                 fetchData();
             }, () => fetchData());
         }
 
-        // 2. Fetch & Feature: Auto-Cleanup (3 Hours)
         async function fetchData() {
             try {
                 const res = await fetch(DB_URL);
                 const data = await res.json();
                 const posts = data ? Object.keys(data).map(id => ({ id, ...data[id] })).reverse() : [];
                 
-                // ৩ ঘণ্টার পুরনো পোস্ট বাদ দিয়ে ফিল্টার (৩ ঘণ্টা = ১০,৮০০,০০০ মিলিসেকেন্ড)
+                // Feature: Auto-Delete (Old posts filtering - 3 hours)
                 const activePosts = posts.filter(post => (Date.now() - post.timestamp) < (3 * 60 * 60 * 1000));
-                
                 renderUI(activePosts);
             } catch (e) { console.error(e); }
         }
@@ -116,27 +114,35 @@
             document.getElementById('active-count').innerText = posts.length;
 
             posts.forEach(post => {
-                const isVerified = (post.true_count || 0) >= 5; // Feature 4: Verified Badge
-                
-                // Map Marker
+                const isVerified = (post.true_count || 0) >= 5;
+                const gMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${post.lat},${post.lon}`;
+
+                // Marker Logic with Navigation Click
                 const icon = L.divIcon({ className: 'biriyani-marker', html: '🍖', iconSize: [30, 30] });
-                L.marker([post.lat, post.lon], { icon }).addTo(markersLayer).bindPopup(`<b>${post.location}</b>`);
+                const marker = L.marker([post.lat, post.lon], { icon }).addTo(markersLayer);
+                marker.bindPopup(`<b>${post.location}</b><br><a href="${gMapsUrl}" target="_blank" style="color:blue">গুগল ম্যাপে যান</a>`);
 
                 // Card Layout
                 container.innerHTML += `
-                    <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] p-7 shadow-lg border dark:border-gray-700">
+                    <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] p-7 shadow-lg border border-orange-50 dark:border-gray-700">
                         <div class="flex justify-between items-center mb-4">
-                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">${new Date(post.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} আপডেট</span>
+                            <span class="text-[9px] font-black text-gray-400 uppercase bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded-md tracking-tighter">${new Date(post.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} আপডেট</span>
                             <button onclick="shareLink('${post.location}')" class="text-orange-500"><i class="fa fa-share-nodes"></i></button>
                         </div>
-                        <h3 class="text-2xl font-black mb-1 flex items-center gap-1">
-                            📍 ${post.location}
-                            ${isVerified ? '<i class="fa-solid fa-circle-check text-blue-500 text-sm" title="Verified"></i>' : ''}
-                        </h3>
+                        
+                        <a href="${gMapsUrl}" target="_blank" class="block group">
+                            <h3 class="text-2xl font-black mb-1 flex items-center gap-1 group-active:text-orange-600 transition-colors">
+                                📍 ${post.location}
+                                ${isVerified ? '<i class="fa-solid fa-circle-check text-blue-500 text-sm"></i>' : ''}
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-gray-300 ml-1"></i>
+                            </h3>
+                        </a>
+
                         <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">${post.description}</p>
+                        
                         <div class="flex gap-3">
-                            <button onclick="handleVote('${post.id}', 'true_count')" class="flex-1 bg-orange-50 dark:bg-gray-700 py-3 rounded-xl text-xs font-bold text-orange-600">✅ সত্যি (${post.true_count || 0})</button>
-                            <button onclick="handleVote('${post.id}', 'stock_out')" class="flex-1 bg-red-50 dark:bg-red-900/10 py-3 rounded-xl text-xs font-bold text-red-600">শেষ?</button>
+                            <button onclick="handleVote('${post.id}', 'true_count')" class="flex-1 bg-orange-50 dark:bg-gray-700 py-3 rounded-xl text-xs font-bold text-orange-600 active:bg-orange-200">✅ সত্যি (${post.true_count || 0})</button>
+                            <a href="${gMapsUrl}" target="_blank" class="flex-1 bg-blue-600 text-white py-3 rounded-xl text-xs font-bold text-center shadow-md">🗺️ গুগল ম্যাপ</a>
                         </div>
                     </div>
                 `;
@@ -156,33 +162,28 @@
             const user = document.getElementById('user-name').value || "অজ্ঞাত";
             const loc = document.getElementById('loc-name').value;
             const desc = document.getElementById('loc-desc').value;
-            if(!loc) return alert("এলাকার নাম দিন!");
+            if(!loc) return alert("এলাকার নাম লিখুন!");
 
-            document.getElementById('submit-btn').innerText = "পাবলিশ হচ্ছে...";
+            document.getElementById('submit-btn').innerText = "ম্যাপে অ্যাড হচ্ছে...";
             await fetch(DB_URL, { method: 'POST', body: JSON.stringify({
                 user, location: loc, description: desc, timestamp: Date.now(),
-                lat: userCoords.lat, lon: userCoords.lon, true_count: 0, stock_out: 0
+                lat: userCoords.lat, lon: userCoords.lon, true_count: 0
             })});
 
             toggleForm(); fetchData();
-            sendNotification("নতুন আপডেট!", `📍 ${loc}-এ বিরিয়ানি পাওয়া যাচ্ছে।`);
-        }
-
-        // Feature 3: Notification
-        function requestNotify() {
-            Notification.requestPermission().then(perm => {
-                if(perm === "granted") alert("নোটিফিকেশন অন হয়েছে! নতুন কিছু অ্যাড হলে জানতে পারবেন।");
-            });
-        }
-
-        function sendNotification(title, body) {
             if (Notification.permission === "granted") {
-                new Notification(title, { body, icon: "https://cdn-icons-png.flaticon.com/512/1046/1046751.png" });
+                new Notification("নতুন লোকেশন!", { body: `📍 ${loc}-এ বিরিয়ানি পাওয়া যাচ্ছে। ম্যাপে দেখুন!` });
             }
         }
 
+        function requestNotify() {
+            Notification.requestPermission().then(perm => {
+                if(perm === "granted") alert("নোটিফিকেশন অন হয়েছে!");
+            });
+        }
+
         function shareLink(loc) {
-            window.open(`https://api.whatsapp.com/send?text=🍖 কুমিল্লায় ফ্রি বিরিয়ানি পাওয়া যাচ্ছে এখানে: ${loc}\nলাইভ ট্র্যাকার ম্যাপ: ${window.location.href}`);
+            window.open(`https://api.whatsapp.com/send?text=🍖 কুমিল্লায় ফ্রি বিরিয়ানি পাওয়া যাচ্ছে এখানে: ${loc}\nগুগল ম্যাপে দেখতে ক্লিক করুন: ${window.location.href}`);
         }
 
         function toggleForm() { document.getElementById('add-form').classList.toggle('hidden'); }
@@ -191,7 +192,6 @@
             document.getElementById('dark-icon').className = document.documentElement.classList.contains('dark') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
         }
 
-        // Countdown Timer
         setInterval(() => {
             const now = new Date(); const iftar = new Date(); iftar.setHours(18, 15, 0);
             if (now > iftar) iftar.setDate(iftar.getDate() + 1);
