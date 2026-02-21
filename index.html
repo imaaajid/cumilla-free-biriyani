@@ -276,4 +276,19 @@
         let quoteIndex = 0;
         const quoteDiv = document.getElementById('islamic-quote');
 
-       
+        function showNextQuote() {
+            quoteDiv.classList.remove('show');
+            setTimeout(() => {
+                quoteDiv.innerText = islamicQuotes[quoteIndex];
+                quoteDiv.classList.add('show');
+                quoteIndex = (quoteIndex + 1) % islamicQuotes.length;
+            }, 500);
+        }
+
+        showNextQuote(); // প্রথমবার
+        setInterval(showNextQuote, 30000); // 30 সেকেন্ডে একবার
+
+    </script>
+
+</body>
+</html>
