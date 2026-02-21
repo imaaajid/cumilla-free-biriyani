@@ -3,85 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cumilla Biriyani Tracker - Ultimate</title>
+    <title>Cumilla Biriyani Tracker - Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;700&display=swap" rel="stylesheet">
     
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+
     <style>
-        body { font-family: 'Hind Siliguri', sans-serif; background-color: #fffaf5; scroll-behavior: smooth; }
+        body { font-family: 'Hind Siliguri', sans-serif; transition: background-color 0.3s; }
         .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        .dark .glass { background: rgba(31, 41, 55, 0.9); border-color: rgba(75, 85, 99, 0.3); }
         .trending-glow { box-shadow: 0 0 25px rgba(234, 88, 12, 0.3); border: 2px solid #ea580c !important; }
-        .stock-out { filter: grayscale(1); opacity: 0.7; pointer-events: none; }
-        .stock-label { transform: rotate(-15deg); }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        .live-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; display: inline-block; animation: pulse 2s infinite; }
+        .stock-out { filter: grayscale(1); opacity: 0.5; pointer-events: none; }
+        
+        /* Preloader Animation */
+        #preloader { position: fixed; inset: 0; background: white; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s; }
+        .dark #preloader { background: #111827; }
     </style>
 </head>
-<body class="pb-32">
+<body class="bg-orange-50 dark:bg-gray-900 dark:text-gray-100 pb-32">
 
-    <div class="bg-stone-900 text-white py-3 px-4 text-center sticky top-0 z-[60] shadow-md border-b border-orange-900/50">
-        <p class="text-[10px] uppercase tracking-widest opacity-70 mb-1">ইফতারের বাকি আর মাত্র</p>
-        <div id="countdown" class="text-xl font-black tracking-widest font-mono text-orange-500">-- : -- : --</div>
+    <div id="preloader">
+        <dotlottie-player src="https://lottie.host/96580f1e-f32a-464a-9b21-4d3752e25528/8R5E12E9Qy.json" background="transparent" speed="1" style="width: 250px; height: 250px;" loop autoplay></dotlottie-player>
+        <p class="text-orange-600 font-bold animate-bounce mt-4">বিরিয়ানি খোঁজা হচ্ছে...</p>
     </div>
 
-    <header class="bg-white/80 border-b border-orange-100 py-6 px-4 text-center glass sticky top-[56px] z-50">
-        <h1 class="text-2xl font-black text-orange-600 uppercase tracking-tighter">Cumilla Biriyani Tracker 🍖</h1>
-        <div class="mt-2 inline-flex items-center gap-2 bg-orange-50 text-orange-700 px-4 py-1.5 rounded-full text-[11px] font-bold">
-            <span class="live-dot"></span> আজকে একটিভ: <span id="count-num" class="mx-1 text-sm text-orange-600">০</span> টি পয়েন্ট
-        </div>
-        
-        <div class="max-w-md mx-auto mt-5 relative">
-            <input type="text" id="search-input" onkeyup="filterPosts()" placeholder="এলাকার নাম লিখে খুঁজুন..." 
-            class="w-full p-4 pl-12 rounded-2xl bg-orange-50 border-none ring-2 ring-orange-100 focus:ring-orange-500 outline-none transition-all text-sm shadow-inner">
-            <i class="fa fa-search absolute left-5 top-4.5 text-orange-300"></i>
-        </div>
-    </header>
-
-    <main id="post-container" class="max-w-md mx-auto px-4 mt-8 space-y-8">
-        <div class="text-center py-20 text-orange-200 animate-pulse font-bold">লোকেশন লোড হচ্ছে...</div>
-    </main>
-
-    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-40">
-        <button onclick="toggleForm()" class="w-full bg-orange-600 text-white font-black py-5 rounded-[2rem] shadow-2xl flex items-center justify-center gap-3 active:scale-95 transition-all border-4 border-white">
-            <i class="fa-solid fa-plus-circle text-xl"></i> নতুন লোকেশন অ্যাড করুন
+    <div class="bg-stone-900 text-white py-3 px-4 flex justify-between items-center sticky top-0 z-[60] shadow-md">
+        <div class="text-[10px] uppercase tracking-widest text-orange-500 font-bold" id="countdown">--:--:--</div>
+        <button onclick="toggleDarkMode()" class="p-2 bg-gray-800 rounded-lg text-orange-400">
+            <i id="dark-icon" class="fa-solid fa-moon"></i>
         </button>
     </div>
 
-    <div id="add-form" class="hidden fixed inset-0 bg-black/70 backdrop-blur-md flex items-end justify-center z-[100]">
-        <div class="bg-white w-full max-w-md p-8 rounded-t-[3rem] shadow-2xl animate-fade-in">
-            <div class="w-16 h-1.5 bg-gray-200 mx-auto mb-6 rounded-full"></div>
-            <h2 class="text-2xl font-black mb-6 text-gray-800">নতুন আপডেট দিন 📝</h2>
-            <input id="loc-name" type="text" placeholder="এলাকার নাম (উদা: চকবাজার)" class="w-full p-4 bg-gray-50 rounded-2xl mb-4 outline-none focus:ring-2 focus:ring-orange-500 border-none shadow-sm font-bold">
-            <input id="map-link" type="text" placeholder="গুগল ম্যাপ লিঙ্ক (অপশনাল)" class="w-full p-4 bg-gray-50 rounded-2xl mb-4 outline-none text-blue-600 text-sm italic">
-            <textarea id="loc-desc" placeholder="বিস্তারিত লিখুন (কত প্যাকেট, কি বিরিয়ানি)..." class="w-full p-4 bg-gray-50 rounded-2xl mb-6 outline-none focus:ring-2 focus:ring-orange-500 h-28 shadow-sm"></textarea>
-            
+    <header class="bg-white/80 dark:bg-gray-800/80 border-b border-orange-100 dark:border-gray-700 py-6 px-4 text-center glass sticky top-[52px] z-50">
+        <h1 class="text-2xl font-black text-orange-600 uppercase tracking-tighter">Cumilla Biriyani Tracker 🍖</h1>
+        <div class="mt-2 inline-flex items-center gap-2 bg-orange-50 dark:bg-gray-700 text-orange-700 dark:text-orange-400 px-4 py-1.5 rounded-full text-[11px] font-bold">
+            <span class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span> আজকে একটিভ: <span id="count-num" class="mx-1">০</span> টি
+        </div>
+        <div class="max-w-md mx-auto mt-4 px-2">
+            <input type="text" id="search-input" onkeyup="filterPosts()" placeholder="এলাকা খুঁজুন..." 
+            class="w-full p-3 pl-10 rounded-2xl bg-gray-100 dark:bg-gray-700 border-none outline-none focus:ring-2 focus:ring-orange-500 transition-all dark:placeholder-gray-400">
+        </div>
+    </header>
+
+    <main id="post-container" class="max-w-md mx-auto px-4 mt-8 space-y-6">
+        </main>
+
+    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-40">
+        <button onclick="toggleForm()" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-black py-4 rounded-3xl shadow-2xl flex items-center justify-center gap-3 active:scale-95 transition-all">
+            <i class="fa-solid fa-plus-circle"></i> তথ্য যোগ করুন
+        </button>
+    </div>
+
+    <div id="add-form" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex items-end justify-center z-[100]">
+        <div class="bg-white dark:bg-gray-800 w-full max-w-md p-8 rounded-t-[3rem] animate-fade-in shadow-2xl">
+            <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-white">নতুন স্পট 📝</h2>
+            <input id="loc-name" type="text" placeholder="লোকেশন নাম" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-4 outline-none dark:text-white">
+            <textarea id="loc-desc" placeholder="বিস্তারিত..." class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-6 outline-none h-24 dark:text-white"></textarea>
             <div class="flex gap-4">
-                <button onclick="toggleForm()" class="flex-1 py-4 font-bold text-gray-400">বাতিল</button>
-                <button id="submit-btn" onclick="saveData()" class="flex-[2] bg-orange-600 text-white py-4 rounded-2xl font-black shadow-lg shadow-orange-200">এখনই পাবলিশ করুন</button>
+                <button onclick="toggleForm()" class="flex-1 py-4 text-gray-400">বাতিল</button>
+                <button onclick="saveData()" class="flex-[2] bg-orange-600 text-white py-4 rounded-2xl font-bold">পাবলিশ</button>
             </div>
         </div>
     </div>
+
+    <audio id="clickSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
 
     <script>
         const DB_URL = "https://cumilla-biriyani-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json";
         let allPosts = [];
 
-        // 1. Iftar Countdown Logic (Set for Cumilla Time)
-        function updateCountdown() {
-            const now = new Date();
-            const iftarTime = new Date();
-            iftarTime.setHours(18, 12, 0); // Approximate Iftar time
-            if (now > iftarTime) iftarTime.setDate(iftarTime.getDate() + 1);
-            const diff = iftarTime - now;
-            const h = Math.floor(diff / (1000 * 60 * 60));
-            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((diff % (1000 * 60)) / 1000);
-            document.getElementById('countdown').innerText = `${h.toString().padStart(2, '0')} : ${m.toString().padStart(2, '0')} : ${s.toString().padStart(2, '0')}`;
+        // Dark Mode Logic
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            document.getElementById('dark-icon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
         }
-        setInterval(updateCountdown, 1000);
 
-        // 2. Fetch Data
+        // Play Sound
+        function playSound() { document.getElementById('clickSound').play(); }
+
+        // Preloader Logic
+        window.addEventListener('load', () => {
+            setTimeout(() => { document.getElementById('preloader').style.opacity = '0'; 
+            setTimeout(() => document.getElementById('preloader').style.display = 'none', 500); }, 2500);
+        });
+
+        // Countdown Logic
+        setInterval(() => {
+            const diff = new Date().setHours(18, 15, 0) - new Date();
+            if (diff < 0) return;
+            const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+            document.getElementById('countdown').innerText = `ইফতারের বাকি: ${h}:${m}:${s}`;
+        }, 1000);
+
         async function fetchData() {
             try {
                 const res = await fetch(DB_URL);
@@ -93,114 +115,60 @@
 
         function renderPosts(posts) {
             const container = document.getElementById('post-container');
-            const countNum = document.getElementById('count-num');
             container.innerHTML = "";
-            let validCount = 0;
-            const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
-
+            let count = 0;
             posts.forEach(post => {
-                if (post.timestamp && (Date.now() - post.timestamp) > TWENTY_FOUR_HOURS) return;
-                validCount++;
+                if ((Date.now() - post.timestamp) > 86400000) return;
+                count++;
+                const isTrending = post.true_count >= 10;
+                const isStockOut = post.stock_out_votes >= 5;
                 
-                const isTrending = (post.true_count || 0) >= 10;
-                const isStockOut = (post.stock_out_votes || 0) >= 5;
-                const mapUrl = post.map_link || `https://www.google.com/maps/search/${encodeURIComponent(post.location + ' Cumilla')}`;
-                const shareText = `📍 ${post.location}\n📝 ${post.description}\n🗺️ ম্যাপ: ${mapUrl}\n\nসব আপডেট দেখুন: ${window.location.href}`;
-
                 container.innerHTML += `
-                    <div class="bg-white rounded-[2.5rem] p-7 border border-orange-50 shadow-sm relative transition-all ${isTrending ? 'trending-glow' : ''} ${isStockOut ? 'stock-out' : ''}">
-                        
-                        ${isStockOut ? '<div class="absolute inset-0 z-10 flex items-center justify-center"><span class="bg-red-600 text-white font-black px-6 py-2 rounded-lg text-2xl stock-label shadow-2xl border-4 border-white">শেষ হয়ে গেছে!</span></div>' : ''}
-                        
-                        ${isTrending ? '<span class="absolute -top-3 left-8 bg-orange-600 text-white text-[10px] px-3 py-1.5 rounded-full font-black shadow-lg animate-bounce">🔥 ট্রেন্ডিং স্পট</span>' : ''}
-                        
-                        <div class="flex justify-between items-center mb-5">
-                            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">${timeSince(post.timestamp)} আগে</span>
-                            <button onclick="shareOnWhatsApp('${shareText}')" class="text-orange-500 hover:text-orange-600 p-2 rounded-full bg-orange-50 transition">
-                                <i class="fa-solid fa-share-nodes"></i>
-                            </button>
+                    <div class="bg-white dark:bg-gray-800 rounded-[2rem] p-6 shadow-sm border border-orange-50 dark:border-gray-700 relative transition-all ${isTrending ? 'trending-glow' : ''} ${isStockOut ? 'stock-out' : ''}">
+                        ${isStockOut ? '<div class="absolute inset-0 flex items-center justify-center z-10"><span class="bg-red-600 text-white font-black px-4 py-1 rounded-lg rotate-[-15deg]">শেষ!</span></div>' : ''}
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-[10px] text-gray-400 font-bold">${new Date(post.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                            <button onclick="sharePost('${post.location}')" class="text-orange-500"><i class="fa-solid fa-share"></i></button>
                         </div>
-
-                        <h3 class="text-2xl font-black text-gray-800 mb-3">📍 ${post.location}</h3>
-                        <p class="text-gray-500 text-sm leading-relaxed mb-6 font-medium">${post.description}</p>
-
-                        <div class="grid grid-cols-2 gap-3 mb-6">
-                            <a href="${mapUrl}" target="_blank" class="flex items-center justify-center gap-2 py-4 bg-stone-900 text-white rounded-2xl font-bold text-xs shadow-lg active:scale-95 transition">
-                                <i class="fa-solid fa-diamond-turn-right"></i> গুগল ম্যাপ
-                            </a>
-                            <button onclick="vote('${post.id}', 'stock_out_votes')" class="flex items-center justify-center gap-2 py-4 bg-red-50 text-red-600 rounded-2xl font-bold text-xs border border-red-100 hover:bg-red-100 transition">
-                                <i class="fa-solid fa-box-archive"></i> বিরিয়ানি শেষ?
-                            </button>
+                        <h3 class="text-xl font-black mb-2">📍 ${post.location}</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-5">${post.description}</p>
+                        <div class="flex gap-2 mb-4">
+                            <button onclick="handleVote('${post.id}', 'true_count')" class="flex-1 py-2 bg-green-50 dark:bg-green-900/20 text-green-600 rounded-xl text-xs font-bold border border-green-100 dark:border-green-800">✅ সত্যি (${post.true_count || 0})</button>
+                            <button onclick="handleVote('${post.id}', 'fake_count')" class="flex-1 py-2 bg-red-50 dark:bg-red-900/20 text-red-600 rounded-xl text-xs font-bold border border-red-100 dark:border-red-800">❌ ভুয়া (${post.fake_count || 0})</button>
                         </div>
-
-                        <div class="flex gap-3">
-                            <button onclick="vote('${post.id}', 'true_count')" class="flex-1 py-3.5 bg-green-50 text-green-700 rounded-2xl text-[11px] font-black border border-green-100 active:scale-95 transition shadow-sm">✅ সত্যি (${post.true_count || 0})</button>
-                            <button onclick="vote('${post.id}', 'fake_count')" class="flex-1 py-3.5 bg-red-50 text-red-700 rounded-2xl text-[11px] font-black border border-red-100 active:scale-95 transition shadow-sm">❌ ভুয়া (${post.fake_count || 0})</button>
-                        </div>
+                        <button onclick="handleVote('${post.id}', 'stock_out_votes')" class="w-full py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-xl text-[10px] font-bold uppercase tracking-widest italic">বিরিয়ানি কি শেষ হয়ে গেছে?</button>
                     </div>
                 `;
             });
-            countNum.innerText = validCount;
+            document.getElementById('count-num').innerText = count;
         }
 
-        async function saveData() {
-            const loc = document.getElementById('loc-name').value;
-            const desc = document.getElementById('loc-desc').value;
-            const map = document.getElementById('map-link').value;
-            if(!loc || !desc) return alert("দয়া করে নাম ও বিস্তারিত লিখুন!");
-            
-            const btn = document.getElementById('submit-btn');
-            btn.innerText = "সার্ভারে সেভ হচ্ছে...";
-            btn.disabled = true;
-
-            await fetch(DB_URL, { method: 'POST', body: JSON.stringify({ 
-                location: loc, 
-                description: desc, 
-                map_link: map, 
-                timestamp: Date.now(), 
-                true_count: 0, 
-                fake_count: 0,
-                stock_out_votes: 0
-            }) });
-            
-            toggleForm(); 
-            fetchData();
-        }
-
-        async function vote(id, type) {
-            const res = await fetch(DB_URL.replace('.json', `/${id}.json`));
-            const post = await res.json();
-            const update = {}; 
-            update[type] = (post[type] || 0) + 1;
+        async function handleVote(id, type) {
+            playSound();
+            const post = allPosts.find(p => p.id === id);
+            const update = {}; update[type] = (post[type] || 0) + 1;
             await fetch(DB_URL.replace('.json', `/${id}.json`), { method: 'PATCH', body: JSON.stringify(update) });
             fetchData();
         }
 
-        function shareOnWhatsApp(text) {
-            const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
-            window.open(url, '_blank');
+        async function saveData() {
+            playSound();
+            const location = document.getElementById('loc-name').value;
+            const description = document.getElementById('loc-desc').value;
+            if(!location || !description) return alert("তথ্য দিন!");
+            await fetch(DB_URL, { method: 'POST', body: JSON.stringify({ location, description, timestamp: Date.now(), true_count: 0, fake_count: 0, stock_out_votes: 0 }) });
+            toggleForm(); fetchData();
         }
 
-        function timeSince(d) {
-            const s = Math.floor((Date.now() - d) / 1000);
-            if (s / 3600 > 1) return Math.floor(s / 3600) + " ঘণ্টা";
-            if (s / 60 > 1) return Math.floor(s / 60) + " মিনিট";
-            return "অল্প কিছুক্ষণ";
-        }
-
+        function toggleForm() { document.getElementById('add-form').classList.toggle('hidden'); }
         function filterPosts() {
             const q = document.getElementById('search-input').value.toLowerCase();
-            renderPosts(allPosts.filter(p => p.location.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)));
+            renderPosts(allPosts.filter(p => p.location.toLowerCase().includes(q)));
         }
 
-        function toggleForm() { 
-            document.getElementById('add-form').classList.toggle('hidden'); 
-            document.getElementById('submit-btn').disabled = false;
-            document.getElementById('submit-btn').innerText = "এখনই পাবলিশ করুন";
-        }
-
+        // Auto Load
+        if(localStorage.getItem('theme') === 'dark') toggleDarkMode();
         fetchData();
-        setInterval(fetchData, 45000);
     </script>
 </body>
 </html>
