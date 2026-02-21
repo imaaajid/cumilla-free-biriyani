@@ -5,16 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cumilla Biriyani Tracker | Final Pro</title>
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Lottie Player -->
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
-    <!-- Leaflet CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -27,7 +20,18 @@
         .biriyani-marker { font-size: 28px; text-shadow: 0 0 10px rgba(0,0,0,0.3); cursor: pointer; }
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
         .dark .glass { background: rgba(31, 41, 55, 0.85); }
-        #preloader { position: fixed; inset: 0; background: white; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        #preloader {
+            position: fixed;
+            inset: 0;
+            background: white;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* vertical center */
+            gap: 20px; /* icon and text spacing */
+            text-align: center; /* text horizontal center */
+        }
         .dark #preloader { background: #111827; color: white; }
         @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         .animate-marquee { display: inline-block; animation: marquee 20s linear infinite; }
@@ -99,10 +103,12 @@
 
     <!-- JS -->
     <script>
+        // -------------------------
+        // Basic Map & DB
+        // -------------------------
         const DB_URL = "https://cumilla-biriyani-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json";
         let map, markersLayer, userCoords = { lat: 23.4607, lon: 91.1809 };
 
-        // 1. Map Initialization
         map = L.map('map', { zoomControl: false }).setView([userCoords.lat, userCoords.lon], 14);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
         markersLayer = L.layerGroup().addTo(map);
@@ -116,7 +122,6 @@
             }, () => fetchData());
         }
 
-        // 2. Fetch Data
         async function fetchData() {
             try {
                 const res = await fetch(DB_URL);
@@ -172,19 +177,15 @@
                 `;
             });
 
-            // Hide preloader after rendering
             setTimeout(() => document.getElementById('preloader').style.display = 'none', 1000);
         }
 
         async function handleVote(id, type) {
-            const res = await fetch(`https://cumilla-biriyani-default-rtdb.asia-southeast1.firebasedatabase.app/posts/${id}.json`);
+            const res = await fetch(`${DB_URL.replace('.json','')}/${id}.json`);
             const post = await res.json();
             const update = {}; 
             update[type] = (post[type] || 0) + 1;
-            await fetch(`https://cumilla-biriyani-default-rtdb.asia-southeast1.firebasedatabase.app/posts/${id}.json`, { 
-                method: 'PATCH', 
-                body: JSON.stringify(update) 
-            });
+            await fetch(`${DB_URL.replace('.json','')}/${id}.json`, { method: 'PATCH', body: JSON.stringify(update) });
             fetchData();
         }
 
@@ -193,33 +194,19 @@
             const loc = document.getElementById('loc-name').value;
             const desc = document.getElementById('loc-desc').value;
             if(!loc) return alert("এলাকার নাম লিখুন!");
-
             document.getElementById('submit-btn').innerText = "সেভ হচ্ছে...";
-            await fetch(DB_URL, { method: 'POST', body: JSON.stringify({
-                user, location: loc, description: desc, timestamp: Date.now(),
-                lat: userCoords.lat, lon: userCoords.lon, true_count: 0, fake_count: 0
-            })});
-
+            await fetch(DB_URL, { method: 'POST', body: JSON.stringify({ user, location: loc, description: desc, timestamp: Date.now(), lat: userCoords.lat, lon: userCoords.lon, true_count: 0, fake_count: 0 })});
             toggleForm(); fetchData();
         }
 
-        function requestNotify() {
-            Notification.requestPermission().then(perm => {
-                if(perm === "granted") alert("নোটিফিকেশন অন হয়েছে!");
-            });
-        }
-
-        function shareLink(loc) {
-            window.open(`https://api.whatsapp.com/send?text=🍖 কুমিল্লায় ফ্রি বিরিয়ানি পাওয়া যাচ্ছে এখানে: ${loc}\nলাইভ ট্র্যাকার ম্যাপ: ${window.location.href}`);
-        }
-
+        function requestNotify() { Notification.requestPermission().then(perm => { if(perm === "granted") alert("নোটিফিকেশন অন হয়েছে!"); }); }
+        function shareLink(loc) { window.open(`https://api.whatsapp.com/send?text=🍖 কুমিল্লায় ফ্রি বিরিয়ানি পাওয়া যাচ্ছে এখানে: ${loc}\nলাইভ ট্র্যাকার ম্যাপ: ${window.location.href}`); }
         function toggleForm() { document.getElementById('add-form').classList.toggle('hidden'); }
         function toggleDarkMode() { 
-            document.documentElement.classList.toggle('dark');
+            document.documentElement.classList.toggle('dark'); 
             document.getElementById('dark-icon').className = document.documentElement.classList.contains('dark') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
         }
 
-        // Countdown
         setInterval(() => {
             const now = new Date(); const iftar = new Date(); iftar.setHours(18, 15, 0);
             if (now > iftar) iftar.setDate(iftar.getDate() + 1);
@@ -230,65 +217,34 @@
 
         fetchData();
 
-        // ----------------------------
-        // Random Fun Preloader Messages
-        // ----------------------------
+        // ---------------------------
+        // Fun Preloader Messages
+        // ---------------------------
         const preloaderMsgs = [
-            "বিরিয়ানি রাস্তা খুঁজছে… 🍖",
-            "ইফতার অভিযান শুরু হচ্ছে… 🏹🌙",
-            "আপনার ক্ষুধা রেডি করা হচ্ছে… 😋",
-            "কাচ্চি ও তেহারি আপডেট হচ্ছে… 🍗",
-            "লাইভ স্পট ম্যাপ ম্যাজিক চলছে… ✨",
-            "নতুন বিরিয়ানি পয়েন্ট সার্চিং… 🔍",
-            "বিরিয়ানি হান্টিং মোড অন… 🕵️‍♂️",
-            "চাপা দাও, ইফতার স্পট লোড হচ্ছে… 🚀",
-            "ফ্রি বিরিয়ানি আপডেট আনছে… 🎁",
+            "বিরিয়ানি রাস্তা খুঁজছে… 🍖","ইফতার অভিযান শুরু হচ্ছে… 🏹🌙","আপনার ক্ষুধা রেডি করা হচ্ছে… 😋",
+            "কাচ্চি ও তেহারি আপডেট হচ্ছে… 🍗","লাইভ স্পট ম্যাপ ম্যাজিক চলছে… ✨","নতুন বিরিয়ানি পয়েন্ট সার্চিং… 🔍",
+            "বিরিয়ানি হান্টিং মোড অন… 🕵️‍♂️","চাপা দাও, ইফতার স্পট লোড হচ্ছে… 🚀","ফ্রি বিরিয়ানি আপডেট আনছে… 🎁",
             "গরম গরম বিরিয়ানি ঠিক আপনার কাছে… 🔥🍛"
         ];
-        const preloaderText = document.getElementById('preloader-text');
-        preloaderText.innerText = preloaderMsgs[Math.floor(Math.random() * preloaderMsgs.length)];
+        document.getElementById('preloader-text').innerText = preloaderMsgs[Math.floor(Math.random()*preloaderMsgs.length)];
 
-        // ----------------------------
-        // Islamic Quotes / Hadith (20)
-        // ----------------------------
+        // ---------------------------
+        // Islamic Quotes / Hadith
+        // ---------------------------
         const islamicQuotes = [
-            "সাবর আল্লাহর নিকট মর্যাদার।",
-            "যারা আল্লাহর পথে সাহায্য করে, তারা ধন্য।",
-            "প্রার্থনা ও ভালো কাজের মাধ্যমে বরকত আসে।",
-            "রোজা ধৈর্য ও নিয়ন্ত্রণ শেখায়।",
-            "সুন্দর আচরণ আল্লাহর প্রিয়।",
-            "যে কেউ অন্যের জন্য উপকারী হয়, সে ধন্য।",
-            "প্রতিদিনের ইফতার আল্লাহর রহমতের স্মৃতি।",
-            "রোজার সময় সৎ ও ন্যায্য আচরণ অপরিহার্য।",
-            "ফ্রি ইফতার বিতরণ করাই সওয়াব।",
-            "আল্লাহর নিকট হালাল খাওয়া বরকত বৃদ্ধি করে।",
-            "যে আল্লাহর নাম নিয়ে খায়, তার খাবারে বরকত থাকে।",
-            "রোজা আত্মশুদ্ধি ও নিয়ন্ত্রণ শেখায়।",
-            "দরিদ্রকে খাওয়ানো মহান আমল।",
-            "প্রত্যেক ইফতার একটি দান।",
-            "আল্লাহর জন্য সাহায্য ও দান বরকত আনে।",
-            "সাহায্য করা আল্লাহর নিকট প্রিয়।",
-            "রোজা ক্ষুধা সহ্য করতে শেখায়।",
-            "ভালো কাজ আল্লাহর কাছে গ্রহণযোগ্য।",
-            "রোজা ধৈর্য, নম্রতা ও ধ্যান শেখায়।",
-            "আল্লাহর জন্য দেওয়া প্রতিটি খাবার সওয়াব।"
+            "সাবর আল্লাহর নিকট মর্যাদার।","যারা আল্লাহর পথে সাহায্য করে, তারা ধন্য।","প্রার্থনা ও ভালো কাজের মাধ্যমে বরকত আসে।",
+            "রোজা ধৈর্য ও নিয়ন্ত্রণ শেখায়।","সুন্দর আচরণ আল্লাহর প্রিয়।","যে কেউ অন্যের জন্য উপকারী হয়, সে ধন্য।",
+            "প্রত্যেক ইফতার আল্লাহর রহমতের স্মৃতি।","রোজার সময় সৎ ও ন্যায্য আচরণ অপরিহার্য।","ফ্রি ইফতার বিতরণ করাই সওয়াব।",
+            "আল্লাহর নিকট হালাল খাওয়া বরকত বৃদ্ধি করে।","যে আল্লাহর নাম নিয়ে খায়, তার খাবারে বরকত থাকে।","রোজা আত্মশুদ্ধি ও নিয়ন্ত্রণ শেখায়।",
+            "দরিদ্রকে খাওয়ানো মহান আমল।","প্রত্যেক ইফতার একটি দান।","আল্লাহর জন্য সাহায্য ও দান বরকত আনে।",
+            "সাহায্য করা আল্লাহর নিকট প্রিয়।","রোজা ক্ষুধা সহ্য করতে শেখায়।","ভালো কাজ আল্লাহর কাছে গ্রহণযোগ্য।",
+            "রোজা ধৈর্য, নম্রতা ও ধ্যান শেখায়।","আল্লাহর জন্য দেওয়া প্রতিটি খাবার সওয়াব।"
         ];
-        let quoteIndex = 0;
-        const quoteDiv = document.getElementById('islamic-quote');
-
-        function showNextQuote() {
-            quoteDiv.classList.remove('show');
-            setTimeout(() => {
-                quoteDiv.innerText = islamicQuotes[quoteIndex];
-                quoteDiv.classList.add('show');
-                quoteIndex = (quoteIndex + 1) % islamicQuotes.length;
-            }, 500);
-        }
-
-        showNextQuote(); // প্রথমবার
-        setInterval(showNextQuote, 30000); // 30 সেকেন্ডে একবার
+        let quoteIndex=0;
+        const quoteDiv=document.getElementById('islamic-quote');
+        function showNextQuote(){quoteDiv.classList.remove('show'); setTimeout(()=>{quoteDiv.innerText=islamicQuotes[quoteIndex]; quoteDiv.classList.add('show'); quoteIndex=(quoteIndex+1)%islamicQuotes.length;},500);}
+        showNextQuote(); setInterval(showNextQuote,30000);
 
     </script>
-
 </body>
 </html>
