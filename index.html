@@ -62,6 +62,20 @@
         </div>
     </header>
 
+    <div class="max-w-md mx-auto px-4 mt-6 flex gap-2">
+        <div class="relative flex-1">
+            <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+            <input id="search-input" oninput="applyFilters()" placeholder="এলাকা খুঁজুন..." class="w-full pl-10 pr-4 py-3 rounded-2xl border dark:bg-gray-800 dark:border-gray-700 focus:ring-2 focus:ring-orange-500 outline-none transition-all text-sm">
+        </div>
+        <select id="food-filter" onchange="applyFilters()" class="px-4 py-3 rounded-2xl border dark:bg-gray-800 dark:border-gray-700 focus:ring-2 focus:ring-orange-500 outline-none text-sm font-bold bg-white dark:text-white cursor-pointer">
+            <option value="">সব বিরিয়ানি</option>
+            <option value="কাচ্চি">কাচ্চি</option>
+            <option value="তেহারি">তেহারি</option>
+            <option value="গরু">গরু</option>
+            <option value="চিকেন">চিকেন</option>
+        </select>
+    </div>
+
     <main id="post-container" class="max-w-md mx-auto px-4 mt-8 space-y-6"></main>
 
     <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-40">
@@ -75,7 +89,13 @@
             <h2 class="text-xl font-bold mb-4 text-orange-600">নতুন আপডেট দিন 📝</h2>
             <input id="user-name" type="text" placeholder="আপনার নাম" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border border-transparent focus:border-orange-500">
             <input id="loc-name" type="text" placeholder="এলাকার নাম" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border border-transparent focus:border-orange-500">
-            <textarea id="loc-desc" placeholder="বিস্তারিত লিখুন (প্যাকেট সংখ্যা বা সময়)..." class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-6 outline-none h-24 dark:text-white border border-transparent focus:border-orange-500"></textarea>
+            <select id="food-type" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border border-transparent focus:border-orange-500 font-bold">
+                <option value="কাচ্চি">টাইপ: কাচ্চি</option>
+                <option value="তেহারি">টাইপ: তেহারি</option>
+                <option value="গরু">টাইপ: গরু বিরিয়ানি</option>
+                <option value="চিকেন">টাইপ: চিকেন বিরিয়ানি</option>
+            </select>
+            <textarea id="loc-desc" placeholder="বিস্তারিত লিখুন (প্যাকেট সংখ্যা বা সময়)..." class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-6 outline-none h-24 dark:text-white border border-transparent focus:border-orange-500"></textarea>
             <div class="flex gap-4">
                 <button onclick="toggleForm()" class="flex-1 font-bold text-gray-400">বাতিল</button>
                 <button onclick="saveData()" id="submit-btn" class="flex-[2] bg-orange-600 text-white py-4 rounded-2xl font-black shadow-lg">ম্যাপে সেভ করুন</button>
@@ -86,9 +106,7 @@
     <div id="islamic-quote" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-6 py-3 rounded-xl shadow-lg fade-quote z-50 text-center font-semibold text-sm w-[80%] max-w-xs border border-orange-100 dark:border-gray-700"></div>
 
     <script>
-        // -------------------------
-        // ADMIN & DB CONFIG
-        // -------------------------
+        // DB CONFIG
         const DB_URL = "https://cumilla-biriyani-default-rtdb.asia-southeast1.firebasedatabase.app/posts.json";
         const ADMIN_SECRET = "biriyaniadmin2026";
         const urlParams = new URLSearchParams(window.location.search);
@@ -96,11 +114,9 @@
         
         if(isAdmin) document.getElementById("adminBadge").classList.remove("hidden");
 
-        let map, markersLayer, userCoords = { lat: 23.4607, lon: 91.1809 };
+        let map, markersLayer, userCoords = { lat: 23.4607, lon: 91.1809 }, allPosts = [];
 
-        // -------------------------
         // INITIALIZE MAP
-        // -------------------------
         map = L.map('map', { zoomControl: false }).setView([userCoords.lat, userCoords.lon], 14);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
         markersLayer = L.layerGroup().addTo(map);
@@ -114,18 +130,32 @@
             }, () => fetchData());
         }
 
-        // Auto refresh every 10 seconds
-        setInterval(fetchData, 10000);
-
+        // Fetch Data
         async function fetchData() {
             try {
                 const res = await fetch(DB_URL);
                 const data = await res.json();
-                const posts = data ? Object.keys(data).map(id => ({ id, ...data[id] })).reverse() : [];
-                renderUI(posts);
+                allPosts = data ? Object.keys(data).map(id => ({ id, ...data[id] })).reverse() : [];
+                applyFilters(); // Initial render with current filters
             } catch (e) { console.error(e); }
         }
 
+        // Apply Filters & Search
+        function applyFilters() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const foodType = document.getElementById('food-filter').value;
+
+            const filtered = allPosts.filter(post => {
+                const matchesSearch = post.location.toLowerCase().includes(searchTerm) || 
+                                     (post.description && post.description.toLowerCase().includes(searchTerm));
+                const matchesType = foodType === "" || post.foodType === foodType;
+                return matchesSearch && matchesType;
+            });
+
+            renderUI(filtered);
+        }
+
+        // Render UI
         function renderUI(posts) {
             const container = document.getElementById('post-container');
             container.innerHTML = ""; 
@@ -136,27 +166,26 @@
                 const isVerified = (post.true_count || 0) >= 5;
                 const totalVotes = (post.true_count || 0) + (post.fake_count || 0);
                 const percent = totalVotes ? Math.round((post.true_count || 0) / totalVotes * 100) : 0;
-                const gMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${post.lat},${post.lon}`;
+                // Fixed Google Maps URL
+                const gMapsUrl = `https://www.google.com/maps/search/?api=1&query=${post.lat},${post.lon}`;
 
-                // Marker
+                // Map Marker
                 const icon = L.divIcon({ className: 'biriyani-marker', html: '🍖', iconSize: [30, 30] });
-                const marker = L.marker([post.lat, post.lon], { icon }).addTo(markersLayer);
-                marker.bindPopup(`<b>${post.location}</b><br><a href="${gMapsUrl}" target="_blank" style="color:blue;font-weight:bold;">গুগল ম্যাপে রাস্তা দেখুন</a>`);
+                L.marker([post.lat, post.lon], { icon }).addTo(markersLayer)
+                 .bindPopup(`<b>${post.location}</b><br><span style="font-size:10px">${post.foodType || ''}</span><br><a href="${gMapsUrl}" target="_blank" style="color:blue;font-weight:bold;">গুগল ম্যাপে রাস্তা দেখুন</a>`);
 
                 // UI Card
                 container.innerHTML += `
                     <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] p-7 shadow-lg border border-orange-50 dark:border-gray-700 relative">
                         ${isAdmin ? `
                             <div class="absolute top-4 right-6 flex gap-2">
-                                <button onclick="editPost('${post.id}')" class="text-blue-500 p-1"><i class="fa-solid fa-pen-to-square"></i></button>
                                 <button onclick="deletePost('${post.id}')" class="text-red-500 p-1"><i class="fa-solid fa-trash"></i></button>
-                                <button onclick="resetVotes('${post.id}')" class="text-yellow-500 p-1"><i class="fa-solid fa-arrows-rotate"></i></button>
                             </div>
                         ` : ''}
 
                         <div class="flex justify-between items-center mb-4">
                             <span class="text-[9px] font-black text-gray-400 uppercase bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded-md tracking-tighter">
-                                ${new Date(post.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} আপডেট
+                                ${new Date(post.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} আপডেট | ${post.foodType || 'বিরিয়ানি'}
                             </span>
                             <button onclick="shareLink('${post.location}')" class="text-orange-500"><i class="fa fa-share-nodes"></i></button>
                         </div>
@@ -191,73 +220,29 @@
                     </div>
                 `;
             });
-
             document.getElementById('preloader').style.display = 'none';
         }
 
-        // -------------------------
-        // VOTING SYSTEM (One Vote Only)
-        // -------------------------
+        // Voting System
         async function handleVote(id, type) {
             let voted = JSON.parse(localStorage.getItem("votes") || "{}");
-            if(voted[id]) {
-                alert("আপনি এই লোকেশনে ইতিমধ্যে ভোট দিয়েছেন!");
-                return;
-            }
+            if(voted[id]) { alert("ইতিমধ্যে ভোট দিয়েছেন!"); return; }
 
-            const cleanUrl = DB_URL.replace('.json', '');
-            const res = await fetch(`${cleanUrl}/${id}.json`);
+            const res = await fetch(DB_URL.replace('.json', `/${id}.json`));
             const post = await res.json();
+            const update = {}; update[type] = (post[type] || 0) + 1;
             
-            const update = {}; 
-            update[type] = (post[type] || 0) + 1;
-            
-            await fetch(`${cleanUrl}/${id}.json`, { 
-                method: 'PATCH', 
-                body: JSON.stringify(update) 
-            });
-
-            voted[id] = true;
-            localStorage.setItem("votes", JSON.stringify(voted));
+            await fetch(DB_URL.replace('.json', `/${id}.json`), { method: 'PATCH', body: JSON.stringify(update) });
+            voted[id] = true; localStorage.setItem("votes", JSON.stringify(voted));
             fetchData();
         }
 
-        // -------------------------
-        // ADMIN FUNCTIONS
-        // -------------------------
-        async function deletePost(id) {
-            if(!confirm("আপনি কি নিশ্চিতভাবে এই পোস্টটি ডিলিট করতে চান?")) return;
-            await fetch(DB_URL.replace('.json','') + `/${id}.json`, { method: 'DELETE' });
-            fetchData();
-        }
-
-        async function resetVotes(id) {
-            if(!confirm("ভোট রিসেট করবেন?")) return;
-            await fetch(DB_URL.replace('.json','') + `/${id}.json`, { 
-                method: 'PATCH', 
-                body: JSON.stringify({ true_count: 0, fake_count: 0 }) 
-            });
-            fetchData();
-        }
-
-        async function editPost(id) {
-            const newLoc = prompt("নতুন লোকেশন নাম:");
-            const newDesc = prompt("নতুন বর্ণনা:");
-            if(!newLoc) return;
-            await fetch(DB_URL.replace('.json','') + `/${id}.json`, { 
-                method: 'PATCH', 
-                body: JSON.stringify({ location: newLoc, description: newDesc }) 
-            });
-            fetchData();
-        }
-
-        // -------------------------
-        // CORE FUNCTIONS
-        // -------------------------
+        // Save Data
         async function saveData() {
             const user = document.getElementById('user-name').value || "অজ্ঞাত";
             const loc = document.getElementById('loc-name').value;
             const desc = document.getElementById('loc-desc').value;
+            const type = document.getElementById('food-type').value;
             
             if(!loc) return alert("এলাকার নাম লিখুন!");
             
@@ -265,34 +250,36 @@
             await fetch(DB_URL, { 
                 method: 'POST', 
                 body: JSON.stringify({ 
-                    user, location: loc, description: desc, 
+                    user, location: loc, description: desc, foodType: type,
                     timestamp: Date.now(), lat: userCoords.lat, lon: userCoords.lon, 
                     true_count: 0, fake_count: 0 
                 })
             });
             
             document.getElementById('submit-btn').innerText = "ম্যাপে সেভ করুন";
-            toggleForm(); 
+            toggleForm(); fetchData();
+        }
+
+        // Admin Delete
+        async function deletePost(id) {
+            if(!confirm("ডিলিট করবেন?")) return;
+            await fetch(DB_URL.replace('.json', `/${id}.json`), { method: 'DELETE' });
             fetchData();
         }
 
+        // Utils
         function toggleDarkMode() { 
             document.documentElement.classList.toggle('dark'); 
             document.getElementById('dark-icon').className = document.documentElement.classList.contains('dark') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
         }
-
         function toggleForm() { document.getElementById('add-form').classList.toggle('hidden'); }
-
         function shareLink(loc) { 
-            const text = `🍖 কুমিল্লায় ফ্রি বিরিয়ানি পাওয়া যাচ্ছে এখানে: ${loc}\nলাইভ ট্র্যাকার ম্যাপ: ${window.location.href}`;
+            const text = `🍖 কুমিল্লায় ফ্রি বিরিয়ানি: ${loc}\nম্যাপ: ${window.location.href}`;
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`); 
         }
+        function requestNotify() { Notification.requestPermission().then(perm => { if(perm === "granted") alert("অন হয়েছে!"); }); }
 
-        function requestNotify() { Notification.requestPermission().then(perm => { if(perm === "granted") alert("নোটিফিকেশন অন হয়েছে!"); }); }
-
-        // -------------------------
-        // TIMER & QUOTES
-        // -------------------------
+        // Timer
         setInterval(() => {
             const now = new Date(); const iftar = new Date(); iftar.setHours(18, 15, 0);
             if (now > iftar) iftar.setDate(iftar.getDate() + 1);
@@ -301,23 +288,19 @@
             document.getElementById('countdown').innerText = `ইফতারের বাকি: ${h}:${m}:${s}`;
         }, 1000);
 
-        const preloaderMsgs = ["বিরিয়ানি রাস্তা খুঁজছে… 🍖","ইফতার অভিযান শুরু হচ্ছে… 🏹🌙","আপনার ক্ষুধা রেডি করা হচ্ছে… 😋","কাচ্চি ও তেহারি আপডেট হচ্ছে… 🍗","লাইভ স্পট ম্যাপ ম্যাজিক চলছে… ✨","নতুন বিরিয়ানি পয়েন্ট সার্চিং… 🔍"];
-        document.getElementById('preloader-text').innerText = preloaderMsgs[Math.floor(Math.random()*preloaderMsgs.length)];
-
-        const islamicQuotes = ["সাবর আল্লাহর নিকট মর্যাদার।","যারা আল্লাহর পথে সাহায্য করে, তারা ধন্য।","প্রার্থনা ও ভালো কাজের মাধ্যমে বরকত আসে।","রোজা ধৈর্য ও নিয়ন্ত্রণ শেখায়।","সুন্দর আচরণ আল্লাহর প্রিয়।","দরিদ্রকে খাওয়ানো মহান আমল।","আল্লাহর জন্য দেওয়া প্রতিটি খাবার সওয়াব।"];
+        const islamicQuotes = ["দরিদ্রকে খাওয়ানো মহান আমল।","সুন্দর আচরণ আল্লাহর প্রিয়।","রোজা ধৈর্য ও নিয়ন্ত্রণ শেখায়।"];
         let quoteIndex=0;
-        const quoteDiv=document.getElementById('islamic-quote');
-        function showNextQuote(){
-            quoteDiv.classList.remove('show'); 
+        setInterval(()=>{
+            const q = document.getElementById('islamic-quote');
+            q.classList.remove('show');
             setTimeout(()=>{
-                quoteDiv.innerText=islamicQuotes[quoteIndex]; 
-                quoteDiv.classList.add('show'); 
+                q.innerText=islamicQuotes[quoteIndex]; q.classList.add('show');
                 quoteIndex=(quoteIndex+1)%islamicQuotes.length;
             },500);
-        }
-        showNextQuote(); setInterval(showNextQuote,30000);
+        },30000);
 
         fetchData();
+        setInterval(fetchData, 30000); // Auto refresh every 30s
     </script>
 </body>
 </html>
