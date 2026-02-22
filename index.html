@@ -338,7 +338,7 @@
         function shareLink(loc) { window.open(`https://api.whatsapp.com/send?text=Free Biriyani at ${loc} - Track here: ${window.location.href}`); }
 
         setInterval(() => {
-            const now = new Date(); const iftar = new Date(); iftar.setHours(18, 15, 0);
+            const now = new Date(); const iftar = new Date(); iftar.setHours(17, 57, 0);
             if (now > iftar) iftar.setDate(iftar.getDate() + 1);
             const diff = iftar - now;
             const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
@@ -349,3 +349,4 @@
     </script>
 </body>
 </html>
+
