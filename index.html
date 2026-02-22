@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!DOCTYPE html>
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
@@ -129,10 +129,13 @@
     </div>
 
     <div id="add-form" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md flex items-end justify-center z-[120]">
-        <div class="bg-white dark:bg-gray-800 w-full max-w-md p-8 rounded-t-[3rem] shadow-2xl">
+        <div class="bg-white dark:bg-gray-800 w-full max-w-md p-8 rounded-t-[3rem] shadow-2xl overflow-y-auto max-h-[90vh]">
             <h2 class="text-xl font-bold mb-4 text-orange-600">নতুন আপডেট দিন 📝</h2>
             <input id="user-name" type="text" placeholder="আপনার নাম (লিডারবোর্ডের জন্য)" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border focus:border-orange-500">
             <input id="loc-name" type="text" placeholder="সঠিক এলাকার নাম (যেমন: কান্দিরপাড়)" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border focus:border-orange-500">
+            
+            <input id="mosque-name" type="text" placeholder="মসজিদের নাম লিখুন (বাধ্যতামূলক)" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border border-red-200 focus:border-orange-500">
+            
             <select id="food-type" class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-2xl mb-3 outline-none dark:text-white border focus:border-orange-500 font-bold">
                 <option value="কাচ্চি">কাচ্চি</option>
                 <option value="তেহারি">তেহারি</option>
@@ -210,7 +213,7 @@
             const searchTerm = document.getElementById('search-input').value.toLowerCase();
             const foodType = document.getElementById('food-filter').value;
             const filtered = allPosts.filter(p => {
-                const matchSearch = p.location.toLowerCase().includes(searchTerm);
+                const matchSearch = p.location.toLowerCase().includes(searchTerm) || (p.mosqueName && p.mosqueName.toLowerCase().includes(searchTerm));
                 const matchType = foodType === "" || p.foodType === foodType;
                 return matchSearch && matchType;
             });
@@ -227,16 +230,15 @@
                 const total = (post.true_count || 0) + (post.fake_count || 0);
                 const percent = total ? Math.round((post.true_count || 0) / total * 100) : 0;
                 
-                const searchQuery = encodeURIComponent(post.location + ", Cumilla");
+                const searchQuery = encodeURIComponent(post.location + " " + (post.mosqueName || "") + ", Cumilla");
                 const gMapsUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
 
-                // সময় ও তারিখ ফরম্যাটিং
                 const postDate = new Date(post.timestamp);
                 const formattedTime = postDate.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
                 const formattedDate = postDate.toLocaleDateString('bn-BD', { day: 'numeric', month: 'short' });
 
                 L.marker([post.lat, post.lon], { icon: L.divIcon({className:'biriyani-marker', html:'🍖'}) }).addTo(markersLayer)
-                 .bindPopup(`<b>${post.location}</b><br><a href="${gMapsUrl}" target="_blank">ম্যাপ দেখুন</a>`);
+                 .bindPopup(`<b>${post.location}</b><br>${post.mosqueName || ''}<br><a href="${gMapsUrl}" target="_blank">ম্যাপ দেখুন</a>`);
 
                 container.innerHTML += `
                     <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] p-7 shadow-lg border border-orange-50 dark:border-gray-700">
@@ -250,23 +252,29 @@
                             </div>
                         </div>
                         <h3 class="text-2xl font-black mb-1 flex items-center">📍 ${post.location} ${isVerified ? '<i class="fa-solid fa-circle-check blue-tick"></i>' : ''}</h3>
+                        
+                        <div class="text-orange-600 dark:text-orange-400 font-bold text-sm mb-2"><i class="fa-solid fa-mosque"></i> ${post.mosqueName || 'মসজিদের নাম দেওয়া হয়নি'}</div>
+                        
                         <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">${post.description || ''}</p>
                         <div class="w-full bg-gray-100 dark:bg-gray-700 h-1.5 rounded-full mb-4"><div class="bg-green-500 h-full rounded-full" style="width:${percent}%"></div></div>
                         <div class="flex gap-2 mb-3">
                             <button onclick="handleVote('${post.id}', 'true_count')" class="flex-1 bg-green-50 dark:bg-green-900/20 py-3 rounded-xl text-xs font-bold text-green-600">✅ সত্যি (${post.true_count || 0})</button>
                             <button onclick="handleVote('${post.id}', 'fake_count')" class="flex-1 bg-red-50 dark:bg-red-900/20 py-3 rounded-xl text-xs font-bold text-red-600">❌ মিথ্যা (${post.fake_count || 0})</button>
                         </div>
-                        <a href="${gMapsUrl}" target="_blank" class="block w-full bg-blue-600 text-white py-3 rounded-xl text-xs font-bold text-center">🗺️ গুগল ম্যাপে ${post.location} খুঁজুন</a>
+                        <a href="${gMapsUrl}" target="_blank" class="block w-full bg-blue-600 text-white py-3 rounded-xl text-xs font-bold text-center">🗺️ গুগল ম্যাপে খুঁজুন</a>
                     </div>
                 `;
             });
             setTimeout(() => document.getElementById('preloader').style.display = 'none', 1000);
         }
 
-        // --- কাস্টম পপআপ লজিক ---
         function showHadishAlert() {
             const loc = document.getElementById('loc-name').value;
+            const mosque = document.getElementById('mosque-name').value;
+            
+            // VALIDATION: MOSQUE NAME IS REQUIRED
             if(!loc) return alert("লোকেশন নাম দিন!");
+            if(!mosque) return alert("মসজিদের নাম দেওয়া বাধ্যতামূলক!");
             
             const hadish = "“তোমরা মিথ্যা থেকে বেঁচে থাক। কারণ মিথ্যা মানুষকে পাপের দিকে নিয়ে যায়। আর পাপ মানুষকে জাহান্নামের দিকে নিয়ে যায়।”\n[বুখারী ও মুসলিম]";
             document.getElementById('alert-msg').innerText = hadish;
@@ -280,14 +288,29 @@
 
         async function saveData() {
             const loc = document.getElementById('loc-name').value;
+            const mosque = document.getElementById('mosque-name').value;
             const name = document.getElementById('user-name').value || "Anonymous";
+            
             document.getElementById('submit-btn').innerText = "সেভ হচ্ছে...";
             const payload = { 
-                userName: name, location: loc, description: document.getElementById('loc-desc').value,
-                foodType: document.getElementById('food-type').value, timestamp: Date.now(),
-                lat: userCoords.lat, lon: userCoords.lon, true_count: 0, fake_count: 0
+                userName: name, 
+                location: loc, 
+                mosqueName: mosque, // SAVING MOSQUE NAME
+                description: document.getElementById('loc-desc').value,
+                foodType: document.getElementById('food-type').value, 
+                timestamp: Date.now(),
+                lat: userCoords.lat, 
+                lon: userCoords.lon, 
+                true_count: 0, 
+                fake_count: 0
             };
             await fetch(DB_URL, { method: 'POST', body: JSON.stringify(payload) });
+            
+            // CLEAR FIELDS
+            document.getElementById('mosque-name').value = "";
+            document.getElementById('loc-name').value = "";
+            document.getElementById('loc-desc').value = "";
+            
             toggleForm(); fetchData();
             document.getElementById('submit-btn').innerText = "ম্যাপে সেভ করুন";
         }
@@ -338,7 +361,7 @@
         function shareLink(loc) { window.open(`https://api.whatsapp.com/send?text=Free Biriyani at ${loc} - Track here: ${window.location.href}`); }
 
         setInterval(() => {
-            const now = new Date(); const iftar = new Date(); iftar.setHours(17, 57, 0);
+            const now = new Date(); const iftar = new Date(); iftar.setHours(17, 57, 0); // UPDATED TO 5:57
             if (now > iftar) iftar.setDate(iftar.getDate() + 1);
             const diff = iftar - now;
             const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
@@ -349,4 +372,3 @@
     </script>
 </body>
 </html>
-
